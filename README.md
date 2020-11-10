@@ -56,20 +56,12 @@
 Tool used to build the complete graph of interaction and find the LGN.
 How to use:
 ```
-Usage: python3 managerList.py PARAM [FILTERS]... -files [FILES]...
+Usage: python3 managerList.py -vitis [FILTERS]... -files [FILES]...
 FILES can be a list of .csv or .zip. These are the expansion list from OneGenE
-PARAM:
- '-vitis'  Lists of vitis
- '-human'  Lists of human. Need to be follow by:
-  '-fantom'  Lists from Fantom DB
-  '-TCGA'    Lists from TCGA DB
 FILTERS:
  '-a'             Autosave image of graphs. If -a is present, it save automatically .png. USE IN MICROSOFT WINDOWS
  '-f [NUMBER]'    Ignored genes with frel<=NUMBER
- ONLY FOR VITIS GENES:
-  '-t [PATTERN,...]'      Take genes that in 'functional annotation' or 'Network1' column there is at least one pattern
- ONLY FOR HUMAN GENES:
-  '-i ['comp'/'notcomp']' Ignored edges between isoforms of same gene
+ '-t [PATTERN,...]'      Take genes that in 'functional annotation' or 'Network1' column there is at least one pattern
 ```
 Example with Cuticle genes:
 ```
@@ -84,11 +76,7 @@ python3 managerList.py --help
 Tool used to expand the LGN.
 How to use:
 ```
-Usage: python3 integrateCoupleGenes.py PARAM TYPEA [FILTERS]... -files [GENES] [FILES]... [ISOFORM]
-PARAM:
- '-vitis'  Lists of vitis
- '-fantom' Lists of fantom DB
- '-TCGA'   Lists of TCGA DB
+Usage: python3 integrateCoupleGenes.py -vitis TYPEA [FILTERS]... -files [GENES] [FILES]...
 TYPEA:
  '-frel'        Build expansion network based on FREL. Required filter '-f'
  '-rank [INT]'  Build expansion network based on RANK. Take top genes
@@ -100,7 +88,6 @@ FILTERS:
  '-f [NUMBER]'  Ignored genes with frel<=NUMBER
 GENES: file .csv with the genes to analyze. Example: ('CoupleGeneToIntegrate/coupleGene.csv')
 FILES can be a list of .csv or .zip
-ISOFORM: file .csv from the execution of ManagerList.py with the composition of edge gene-gene. To use only with '-fantom'
 ```
 Example with Cuticle genes:
 ```
