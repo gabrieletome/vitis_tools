@@ -26,9 +26,7 @@ def main():
             vitis.printOutput(coreGraph, graphGenes)
         else:
             print('ERROR: Need 1 parameters')
-            print('Usage: python3 managerList.py PARAM [FILTERS]... -files [FILES]...')
-            print('PARAM:')
-            print('\t-vitis\tLists of vitis')
+            print('Usage: python3 managerList.py -vitis [FILTERS]... -files [FILES]...')
     else:
         print('ERROR: wrong format')
         ut.printInfo()

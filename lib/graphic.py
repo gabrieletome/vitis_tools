@@ -13,7 +13,7 @@ import re
 import random
 
 #Draw general graph
-def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, comprimeNode, typePrint):
+def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, typePrint):
     #range to divide type of edges
     step1_range = round((range_frel/3)+1-range_frel, 2)
     step2_range = round((range_frel/3*2)+1-range_frel, 2)
@@ -72,7 +72,7 @@ def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, compr
     #print the connected components of the complete graph
     if len(list_Genes) > 0 and not typePrint:
         subgraphs = sorted(list(G.subgraph(c) for c in nx.connected_components(G)), key=len, reverse=True)
-        f = open(namefile+'_connected_components.txt', 'w')
+        f = open(namefiles[0]+"/"+namefiles[1]+'/complete_graph_connected_components.txt', 'w')
         i = 0
         while i < len(subgraphs):
             s = subgraphs[i]
@@ -84,7 +84,7 @@ def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, compr
                 f.write(str(lNodes)+'\n')
             i += 1
         f.close()
-        print('Create: '+namefile+'_connected_components.txt', flush=True)
+        print('Create: '+namefiles[0]+"/"+namefiles[1]+'/complete_graph_connected_components.txt', flush=True)
 
     ePos = [(u, v) for (u, v, p) in newPearson if p >= 0]
     eNeg = [(u, v) for (u, v, p) in newPearson if p < 0]
@@ -137,39 +137,13 @@ def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, compr
     red_line = mlines.Line2D([], [], linewidth=1, color='black', label='frel <= '+str(step1_range), linestyle='dotted')
     pos_line = mlines.Line2D([], [], linewidth=1, color='black', label='Pearson corr. >= 0')
     neg_line = mlines.Line2D([], [], linewidth=1, color='red', label='Pearson corr. < 0')
-    idName = mlines.Line2D([], [], label='ID --> NAME', visible=False)
     if len(eNeg) > 0:
-        #textLegend = [black_line, blue_line, red_line, pos_line, neg_line, idName]
-        textLegend = [black_line, blue_line, red_line, pos_line, neg_line] #todel
+        textLegend = [black_line, blue_line, red_line, pos_line, neg_line]
     else:
-        #textLegend = [black_line, blue_line, red_line, idName]
-        textLegend = [black_line, blue_line, red_line] #todel
+        textLegend = [black_line, blue_line, red_line]
     #Write legend ID-->GENE
     nameGenes = idNode.keys()
     dictStrToWrite = {}
-    #UPDATE NAME GENE
-    f = open('import_doc/NewAnnotVitisnet3.csv', 'r')
-    text = f.readlines()
-    listLineName = []
-    i = 1
-    while i < len(text):
-        listLineName.append(text[i].split(','))
-        i += 1
-    listBioNameUpdate = {}
-    for l in listLineName:
-        if l[3] != '':
-            if l[3] not in listBioNameUpdate.values():
-                listBioNameUpdate[l[0].upper()] = l[3]
-            else:
-                listBioNameUpdate[l[0].upper()] = l[3]+'_'+l[0].upper()
-        elif l[2] != '':
-            if l[2] not in listBioNameUpdate.values():
-                listBioNameUpdate[l[0].upper()] = l[2]
-            else:
-                listBioNameUpdate[l[0].upper()] = l[2]+'_'+l[0].upper()
-        else:
-            listBioNameUpdate[l[0].upper()] = l[0].upper()
-    f.close()
     #Read information of Vitis genes
     f = open('import_doc/NewAnnotVitisnet3.csv', 'r')
     text = f.readlines()
@@ -179,36 +153,23 @@ def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, compr
         listLineName.append(text[i].split(','))
         i += 1
     for k in nameGenes:
-        listBR = (list(listBioNameUpdate.keys())[list(listBioNameUpdate.values()).index(k)]).split('<BR>')
-        #listBR = k.split('<BR>')
-        for elem in listBR:
-            try:
-                #print([u[0].upper() for u in listLineName])
-                if elem in [u[0].upper() for u in listLineName]:
-                    index = [u[0].upper() for u in listLineName].index(elem)
-                    u = listLineName[index]
-                    dictStrToWrite[elem] = str(u[0])+','+str(u[1])+','+str(u[2])+','+str(u[3])+','+str(u[4])+','+str(u[5])
-            except:
-                pass
-    fileOut = namefile.split('graph')[0]+'graph_legend_ID_NAME.csv'
+        if k in [u[0].upper() for u in listLineName]:
+            index = [u[0].upper() for u in listLineName].index(k)
+            u = listLineName[index]
+            dictStrToWrite[k] = str(u[0])+','+str(u[1])+','+str(u[2])+','+str(u[3])+','+str(u[4])+','+str(u[5])
+        else:
+            dictStrToWrite[k] = str(k)+"\n"
+    fileOut = namefile.split("Graph")[0]+'graph_legend_ID_NAME.csv'
     print('LEGEND IN: \''+fileOut+'\'')
     f = open(fileOut, 'w')
     f.write('ID in graph,'+text[0].split(',')[0]+','+text[0].split(',')[1]+','+text[0].split(',')[2]+','+text[0].split(',')[3]+','+text[0].split(',')[4]+','+text[0].split(',')[5])
     for k in nameGenes:
-        listBR = (list(listBioNameUpdate.keys())[list(listBioNameUpdate.values()).index(k)]).split('<BR>')
-        #listBR = k.split('<BR>')
-        for elem in listBR:
-            try:
-                f.write(str(idNode[k])+','+dictStrToWrite[elem])
-            except:
-                pass
+        f.write(str(idNode[k])+','+dictStrToWrite[k])
     f.close()
 
     plt.legend(handles=textLegend, fontsize = 'xx-small').set_draggable(True)
     #autoSave PNG or show
     if autoSaveImg:
-        namefile = namefile.replace("<", "_")
-        namefile = namefile.replace(">", "_")
         plt.savefig(namefile+'.png')
         print('Create: \''+namefile+'.png\'', flush=True)
     else:
