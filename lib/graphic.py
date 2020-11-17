@@ -180,7 +180,7 @@ def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, typeP
     plt.close()
 
 #Draw graph of expansion LGN
-def printCommonGraph(listCommonGenes, pearsonComplete, range_frel, nameDir, autoSaveImg, listBioNameUpdate):
+def printCommonGraph(listCommonGenes, pearsonComplete, range_frel, nameDir, autoSaveImg):
     #range to divide type of edges
     step1_range = round((range_frel/3)+1-range_frel, 2)
     step2_range = round((range_frel/3*2)+1-range_frel, 2)
@@ -320,26 +320,18 @@ def printCommonGraph(listCommonGenes, pearsonComplete, range_frel, nameDir, auto
             listLineName.append(text[i].split(','))
             i += 1
         for k in nameGenes:
-            listBR = (list(listBioNameUpdate.keys())[list(listBioNameUpdate.values()).index(k)]).split('<BR>')
-            for elem in listBR:
-                try:
-                    if elem in [u[0].upper() for u in listLineName]:
-                        index = [u[0].upper() for u in listLineName].index(elem)
-                        u = listLineName[index]
-                        dictStrToWrite[elem] = str(u[0])+','+str(u[1])+','+str(u[2])+','+str(u[3])+','+str(u[4])+','+str(u[5])
-                except:
-                    pass
-        fileOut = namefile.split('graph')[0]+'graph_legend_ID_NAME.csv'
+            if k in [u[0].upper() for u in listLineName]:
+                index = [u[0].upper() for u in listLineName].index(k)
+                u = listLineName[index]
+                dictStrToWrite[k] = str(u[0])+','+str(u[1])+','+str(u[2])+','+str(u[3])+','+str(u[4])+','+str(u[5])
+            else:
+                dictStrToWrite[k] = str(k)+"\n"
+        fileOut = namefile.split("graph")[0]+'graph_legend_ID_NAME.csv'
         print('LEGEND IN: \''+fileOut+'\'')
         f = open(fileOut, 'w')
         f.write('ID in graph,'+text[0].split(',')[0]+','+text[0].split(',')[1]+','+text[0].split(',')[2]+','+text[0].split(',')[3]+','+text[0].split(',')[4]+','+text[0].split(',')[5])
         for k in nameGenes:
-            listBR = (list(listBioNameUpdate.keys())[list(listBioNameUpdate.values()).index(k)]).split('<BR>')
-            for elem in listBR:
-                try:
-                    f.write(str(idNode[k])+','+dictStrToWrite[elem])
-                except:
-                    pass
+            f.write(str(idNode[k])+','+dictStrToWrite[k])
         f.close()
 
         #textLegend.append(mlines.Line2D([], [], label='in \''+(fileOut.split('/'))[-1]+'\'', visible=False))
@@ -361,22 +353,11 @@ def printCommonGraph(listCommonGenes, pearsonComplete, range_frel, nameDir, auto
 def printVenn(listForVenn, couples, nameDir):
     for k in listForVenn:
         listKey = sorted([u for u in k.keys()], key=len)
-        nameF = ''
-        for g in sorted([u for u in listKey if len(u.split(',')) == 1]):
-            if nameF == '':
-                nameF = g.split('\'')[1]
-            else:
-                nameF += '_'+g.split('\'')[1]
 
         #Draw venn diagram with 2 sets
         if len(couples[listForVenn.index(k)]) == 2:
             elemSubSets = (len(k[str(listKey[0])]), len(k[str(listKey[1])]), int(len(k[str(listKey[2])])/2))
             v = venn2(subsets = elemSubSets, set_labels = ((re.findall(r'\w+', str(listKey[0])))[0], (re.findall(r'\w+', str(listKey[1])))[0]))
-            nameUnifyGenes = (re.findall(r'\w+', str(listKey[0])))[0] +'_'+ (re.findall(r'\w+', str(listKey[1])))[0]
-            nameF = nameF.replace("<", "_")
-            nameF = nameF.replace(">", "_")
-            nameUnifyGenes = nameUnifyGenes.replace("<", "_")
-            nameUnifyGenes = nameUnifyGenes.replace(">", "_")
             plt.savefig(nameDir+str(listForVenn.index(k))+'/venn.png')
             print('Create: \''+str(listForVenn.index(k))+'/venn.png\'')
         #Draw venn diagram with 3 sets
@@ -390,11 +371,6 @@ def printVenn(listForVenn, couples, nameDir):
             else:
                 pass
                 #TODO: find solution if there isn't some element in listKey
-            nameUnifyGenes = (re.findall(r'\w+', str(listKey[0])))[0] +'_'+ (re.findall(r'\w+', str(listKey[1])))[0] +'_'+ (re.findall(r'\w+', str(listKey[2])))[0]
-            nameF = nameF.replace("<", "_")
-            nameF = nameF.replace(">", "_")
-            nameUnifyGenes = nameUnifyGenes.replace("<", "_")
-            nameUnifyGenes = nameUnifyGenes.replace(">", "_")
             plt.savefig(nameDir+str(listForVenn.index(k))+'/venn.png')
             print('Create: \''+str(listForVenn.index(k))+'/venn.png\'')
         #Draw Venn diagram with 4 sets
@@ -445,11 +421,6 @@ def printVenn(listForVenn, couples, nameDir):
                 '1111': int(completeKeyNumber[listKey[14]]/4),
             }
             v = vennD.venn4(dictLabels, names=[listKeyL[3][0],listKeyL[2][0],listKeyL[1][0],listKeyL[0][0]])
-            nameUnifyGenes = str(listKeyL[0][0]) +'_'+ str(listKeyL[1][0]) +'_'+ str(listKeyL[2][0]) +'_'+ str(listKeyL[3][0])
-            nameF = nameF.replace("<", "_")
-            nameF = nameF.replace(">", "_")
-            nameUnifyGenes = nameUnifyGenes.replace("<", "_")
-            nameUnifyGenes = nameUnifyGenes.replace(">", "_")
             plt.savefig(nameDir+str(listForVenn.index(k))+'/venn.png')
             print('Create: \''+str(listForVenn.index(k))+'/venn.png\'')
 
@@ -524,11 +495,6 @@ def printVenn(listForVenn, couples, nameDir):
                 '11111': int(completeKeyNumber[listKey[30]]/5),
             }
             v = vennD.venn5(dictLabels, names=[listKeyL[4][0],listKeyL[3][0],listKeyL[2][0],listKeyL[1][0],listKeyL[0][0]])
-            nameUnifyGenes = str(listKeyL[0][0]) +'_'+ str(listKeyL[1][0]) +'_'+ str(listKeyL[2][0]) +'_'+ str(listKeyL[3][0]) +'_'+ str(listKeyL[4][0])
-            nameF = nameF.replace("<", "_")
-            nameF = nameF.replace(">", "_")
-            nameUnifyGenes = nameUnifyGenes.replace("<", "_")
-            nameUnifyGenes = nameUnifyGenes.replace(">", "_")
             plt.savefig(nameDir+str(listForVenn.index(k))+'/venn.png')
             print('Create: \''+str(listForVenn.index(k))+'/venn.png\'')
         plt.clf()
@@ -581,13 +547,10 @@ def printHistogram(listCommonGenes, listFiles, nameDir):
                     ax.set_axis_off()
                 counter += 1
 
-        nameF = utex.buildNamefile(l)
         #create dir for each couple of genes
         nameDirGenes = nameDir+str(listCommonGenes.index(l))+'/'
         # tmp = plt.gcf().get_size_inches()
         plt.gcf().set_size_inches(15, 10)
-        nameF = nameF.replace("<", "_")
-        nameF = nameF.replace(">", "_")
         plt.savefig(nameDirGenes+'histogram.png')
         print('Create: \''+nameDirGenes+'histogram.png\'')
         # plt.gcf().set_size_inches(tmp)

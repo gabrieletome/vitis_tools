@@ -8,7 +8,6 @@ import lib.components_graph as comp
 import lib.graphic as graphic
 import lib.utilities as ut
 
-listBioNameUpdate = {}
 autoSaveImg = False
 completeGraph = False
 printDiagram = False
@@ -53,7 +52,6 @@ def readParameters(input):
                 listFiles.append(input[i])
                 i += 1
         elif re.search(r'^-vitis$', input[i]):
-            updateNameVitis()
             i += 1
         elif re.search(r'^-rank$', input[i]):
             typeAnalyze = 1
@@ -94,30 +92,6 @@ def createDir():
     nameDir = 'commonGenesOutput/'+printTime+'/'
     print('Creating directory: \''+nameDir+'\'', flush=True)
 
-#Function to read the update name of vitis genes
-def updateNameVitis():
-    #update the dictionary with name of vitis genes
-    f = open('import_doc/NewAnnotVitisnet3.csv', 'r')
-    text = f.readlines()
-    listLineName = []
-    i = 1
-    while i < len(text):
-        listLineName.append(text[i].split(','))
-        i += 1
-    for l in listLineName:
-        if l[3] != '':
-            if l[3] not in listBioNameUpdate.values():
-                listBioNameUpdate[l[0].upper()] = l[3]
-            else:
-                listBioNameUpdate[l[0].upper()] = l[3]+'_'+l[0].upper()
-        elif l[2] != '':
-            if l[2] not in listBioNameUpdate.values():
-                listBioNameUpdate[l[0].upper()] = l[2]
-            else:
-                listBioNameUpdate[l[0].upper()] = l[2]+'_'+l[0].upper()
-        else:
-            listBioNameUpdate[l[0].upper()] = l[0].upper()
-
 #Main function
 def main():
     if len(sys.argv) >= 2:
@@ -142,26 +116,13 @@ def main():
             #read each file .csv, read first line, check if is our gene
             #If YES -> go further, If NO -> check next file
             #When we have read all expansion of all gene, manage lists
-            #TODO: Fix better. Take VIT as LGN in input
-            try:
-                listCouple = [[listBioNameUpdate[elem.strip().upper()] for elem in u] for u in utex.readFiles(cmd[0][0])]
-            except:
-                listCouple = utex.readFiles(cmd[0][0])
+            listCouple = utex.readFiles(cmd[0][0])
             #find common genes in the lists readed
             listCommonGenes = []
             edgesGraph = []
-            #read files if are TCGA or Vitis
-            listFiles = [utex.manageBR(u) for u in utex.readFilesGenes(cmd[0][1:], listCouple, cmd[1], listBioNameUpdate)]
-                #upload name if is Vitis
-            for l in listFiles:
-                l[0] = listBioNameUpdate[l[0]]
-                i = 1
-                while i < len(l):
-                    try:
-                        l[i] = (l[i][0], listBioNameUpdate[l[i][1]], l[i][2])
-                    except:
-                        pass
-                    i += 1
+            #read files Vitis
+            listFiles = utex.readFilesGenes(cmd[0][1:], listCouple, cmd[1])
+
             #find common genes
             listCommonGenes = utex.findCommonGenes(listCouple, listFiles)
             if typeAnalyze == 0 or typeAnalyze == 1: #frel or rank
@@ -171,22 +132,12 @@ def main():
 
             #print CSV with genes share between every gene of LGN
             createDir()
-            utex.printCSV(edgesGraph, listCommonGenes[1], nameDir, listBioNameUpdate)
+            utex.printCSV(edgesGraph, listCommonGenes[1], nameDir)
             #Draw the Venn diagram, Histogram
             if printDiagram:
                 utex.printNumberVenn(listCommonGenes, nameDir)
                 graphic.printVenn(listCommonGenes[1], listCouple, nameDir)
-                textFiles = [utex.manageBR(u) for u in utex.readFilesGenes(cmd[0][1:], listCouple, [('-f',0.1)], listBioNameUpdate)]
-                #upload name if is Vitis
-                for l in textFiles:
-                    l[0] = listBioNameUpdate[l[0]]
-                    i = 1
-                    while i < len(l):
-                        try:
-                            l[i] = (l[i][0], listBioNameUpdate[l[i][1]], l[i][2])
-                        except:
-                            pass
-                        i += 1
+                textFiles = utex.readFilesGenes(cmd[0][1:], listCouple, [('-f',min_frel)])
                 graphic.printHistogram(edgesGraph, textFiles, nameDir)
 
             pearsonComplete = []
@@ -194,7 +145,7 @@ def main():
                 #Write genes to download and add the edges
                 if completeGraph:
                     #write in a .txt the genes to download
-                    listFileToRead = utex.nameAssociateGene(l, listBioNameUpdate)
+                    listFileToRead = utex.nameAssociateGene(l)
                     if len(listFileToRead) > 0:
                         strToPrint = "To draw edges between associated genes please download lists in file \'"+nameDir+str(edgesGraph.index(l))+"/listToDownload.txt"
                         f = open(nameDir+str(edgesGraph.index(l))+'/listToDownload.txt', 'w')
@@ -212,12 +163,9 @@ def main():
                         graphGenes = ut.manageDuplicates(ut.buildGraph(matrixGenes))
                         print('Process complete')
                         #save new edges in the list
-                        nameF = utex.buildNamefile(l)
                         #create dir for each couple of genes
                         nameDirGenes = nameDir+str(edgesGraph.index(l))+'/'
                         #Write file .csv
-                        nameF = nameF.replace("<", "_")
-                        nameF = nameF.replace(">", "_")
                         f = open(nameDirGenes+'edges_graph'+'.csv', 'a')
                         f.write('Edges between discovered genes\n')
                         f.write('GeneA,rank,frel,GeneB\n')
@@ -231,31 +179,30 @@ def main():
                                 rank = rank[[v[1] for v in rank[1:]].index(graphGenes[i][0])]
                             #f.write(str(listBioNameUpdate[graphGenes[i][0]])+','+str(rank[0])+','+str(listBioNameUpdate[graphGenes[i][1]])+','+str(graphGenes[i][2])+'\n')
                             f.write(str(graphGenes[i][0])+','+str(rank[0])+','+str(graphGenes[i][2])+','+str(graphGenes[i][1])+'\n')
-                            l.append((listBioNameUpdate[graphGenes[i][0]], rank[0], listBioNameUpdate[graphGenes[i][1]], graphGenes[i][2]))
+                            l.append((graphGenes[i][0], rank[0], graphGenes[i][1], graphGenes[i][2]))
                             i += 1
                         f.close()
 
-
                 #Calculating pearson correlation for each edge
-                print('Calculating Pearson correlation '+str(utex.buildNamefile(l))+'...')
+                print('Calculating Pearson correlation...')
                 #listForPearson = [((list(listBioNameUpdate.keys())[list(listBioNameUpdate.values()).index(a)]),(list(listBioNameUpdate.keys())[list(listBioNameUpdate.values()).index(c)]),d) for (a,b,c,d) in l[1:]]
                 #TODEL_GT-001
-                dictConvert = {}
-                for elem in l[1:]:
-                    if elem[0] != 'GT-001':
-                        dictConvert[(list(listBioNameUpdate.keys())[list(listBioNameUpdate.values()).index(elem[0])])] = elem[0]
-                    if elem[2] != 'GT-001':
-                        dictConvert[(list(listBioNameUpdate.keys())[list(listBioNameUpdate.values()).index(elem[2])])] = elem[2]
-                listForPearson = [((list(listBioNameUpdate.keys())[list(listBioNameUpdate.values()).index(a)]),(list(listBioNameUpdate.keys())[list(listBioNameUpdate.values()).index(c)]),d) for (a,b,c,d) in l[1:] if a != 'GT-001' and c != 'GT-001']
-                tmp = utex.manageBR(ut.pearsonCorrelation(listForPearson, 'vv_exprdata_2.csv'))
+                # dictConvert = {}
+                # for elem in l[1:]:
+                #     if elem[0] != 'GT-001':
+                #         dictConvert[(list(listBioNameUpdate.keys())[list(listBioNameUpdate.values()).index(elem[0])])] = elem[0]
+                #     if elem[2] != 'GT-001':
+                #         dictConvert[(list(listBioNameUpdate.keys())[list(listBioNameUpdate.values()).index(elem[2])])] = elem[2]
+                listForPearson = [(a,c,d) for (a,b,c,d) in l[1:]]
+                pearsonComplete.append(ut.pearsonCorrelation(listForPearson, 'vv_exprdata_2.csv'))
                 #pearson = [(listBioNameUpdate[u],listBioNameUpdate[v],p) for (u,v,p) in tmp]
                 #TODEL_GT-001
                 #pearson = [(listBioNameUpdate[u],listBioNameUpdate[v],p) for (u,v,p) in tmp]+[((list(listBioNameUpdate.keys())[list(listBioNameUpdate.values()).index(a)]),(list(listBioNameUpdate.keys())[list(listBioNameUpdate.values()).index(c)]),1) for (a,b,c,d) in l[1:] if a == 'GT-001' or c == 'GT-001']
-                pearson = [(dictConvert[[w for w in u.split('<BR>') if w in dictConvert.keys()][0]],dictConvert[[w for w in v.split('<BR>') if w in dictConvert.keys()][0]],p) for (u,v,p) in tmp]+[((list(listBioNameUpdate.keys())[list(listBioNameUpdate.values()).index(a)]),(list(listBioNameUpdate.keys())[list(listBioNameUpdate.values()).index(c)]),1) for (a,b,c,d) in l[1:] if a == 'GT-001' or c == 'GT-001']
-                pearsonComplete.append(pearson)
+                #pearson = [(dictConvert[[w for w in u.split('<BR>') if w in dictConvert.keys()][0]],dictConvert[[w for w in v.split('<BR>') if w in dictConvert.keys()][0]],p) for (u,v,p) in tmp]+[((list(listBioNameUpdate.keys())[list(listBioNameUpdate.values()).index(a)]),(list(listBioNameUpdate.keys())[list(listBioNameUpdate.values()).index(c)]),1) for (a,b,c,d) in l[1:] if a == 'GT-001' or c == 'GT-001']
+                #pearsonComplete.append(pearson)
                 print('Pearson Correlation done')
             #Draw graph
-            graphic.printCommonGraph(edgesGraph, pearsonComplete, 1-min_frel, nameDir, autoSaveImg, listBioNameUpdate)
+            graphic.printCommonGraph(edgesGraph, pearsonComplete, 1-min_frel, nameDir, autoSaveImg)
         else:
             print('ERROR: wrong format')
             utex.printInfo()

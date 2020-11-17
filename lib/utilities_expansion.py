@@ -23,7 +23,7 @@ def printInfo():
     sys.exit(-1)
 
 #Manager to read and filter files
-def readFilesGenes(listFiles, coupleGenes, listfilter, listBioNameUpdate):
+def readFilesGenes(listFiles, coupleGenes, listfilter):
     dictGeneToAnalyze = {}
     #Read only file of a gene to analyze
     for f in coupleGenes:
@@ -48,11 +48,7 @@ def readFilesGenes(listFiles, coupleGenes, listfilter, listBioNameUpdate):
                     #different split if is vitis or human
                     csvText = csvText[1]
                     csvListText = csvText.split(r'\n')
-                    try:
-                        nameGene = listBioNameUpdate[((csvListText[0].split(r','))[3]).upper()]
-                    except:
-                        listBioNameUpdate[((csvListText[0].split(r','))[3]).upper()] = ((csvListText[0].split(r','))[3]).upper()
-                        nameGene = ((csvListText[0].split(r','))[3]).upper()
+                    nameGene = ((csvListText[0].split(r','))[3]).upper()
                     #if is a gene to analyze read it
                     if nameGene in dictGeneToAnalyze.keys():
                         csvTemp = open(namefilezip, 'w')
@@ -103,7 +99,7 @@ def buildNamefile(l):
         else:
             nameF += '_'+g
     return nameF
-
+    
 #Switch the filter to the correct function
 #Return list of genes filtered
 def applyFilter(listGenes, filter):
@@ -137,7 +133,7 @@ def readFiles(file):
     while i < len(listLine):
         try:
             if listLine[i] != '':
-                listTuples.append(listLine[i].split(','))
+                listTuples.append(listLine[i].upper().split(','))
         except:
             pass
         i += 1
@@ -145,17 +141,13 @@ def readFiles(file):
 
 #Read name of associated genes
 #Create a list with associated genes with no repetition
-def nameAssociateGene(g, nameUpdate):
+def nameAssociateGene(g):
     alreadyRead = {}
     listGenes = []
     for elem in g[1:]:
         if elem[2] not in g[0] and elem[2] not in alreadyRead.keys():
             listGenes.append(elem[2])
             alreadyRead[elem[2]] = 1
-    i = 0
-    while i < len(listGenes):
-        listGenes[i] = (list(nameUpdate.keys())[list(nameUpdate.values()).index(listGenes[i])])
-        i += 1
     return listGenes
 
 #Print in a file the numbers of gene shared
@@ -314,22 +306,9 @@ def buildEdgesFrelRank(listCouple, listFiles):
         listsEdges.append(innerListEdges)
     return listsEdges
 
-#Manage line with multiple genes
-def manageBR(l):
-    for u in l[1:]:
-        if '<BR>' in u[1]:
-            names = u[1].split('<BR>')
-            tmp = list(u)
-            tmp[1] = names[0]
-            l[l.index(u)] = tuple(tmp)
-            for name in names[1:]:
-                tmp = list(u)
-                tmp[1] = name
-                l.append(tuple(tmp))
-    return l
-
 #
-def printCSV(edgesGraph, listForVenn, nameDir,listBioNameUpdate):
+def printCSV(edgesGraph, listForVenn, nameDir):
+    print("Printing CSV...")
     #Read information of Vitis genes
     f = open('import_doc/NewAnnotVitisnet3.csv', 'r')
     text = f.readlines()
@@ -340,19 +319,21 @@ def printCSV(edgesGraph, listForVenn, nameDir,listBioNameUpdate):
         u = text[i].split(',')
         dictStrToWrite[str(u[0]).upper()] = str(u[0])+','+str(u[1])+','+str(u[2])+','+str(u[3])+','+str(u[4])+','+str(u[5][:-1])
         i += 1
+    f.close()
 
     for k in edgesGraph:
         nameF = buildNamefile(k)
         #create dir for each couple of genes
         nameDirGenes = nameDir+str(edgesGraph.index(k))+'/'
-        nameF = nameF.replace("<", "_")
-        nameF = nameF.replace(">", "_")
         os.mkdir(nameDirGenes)
         #Write file .csv
         f = open(nameDirGenes+'edges_graph'+'.csv', 'w')
         f.write(str(nameF)+',rank,frel,'+lineIntro+'\n')
         for elem in k[1:]:
-            f.write(str(elem[0])+','+str(elem[1])+','+str(elem[3])+','+dictStrToWrite[(list(listBioNameUpdate.keys())[list(listBioNameUpdate.values()).index(elem[2])])]+'\n')
+            try:
+                f.write(str(elem[0])+','+str(elem[1])+','+str(elem[3])+','+dictStrToWrite[elem[2]]+'\n')
+            except:
+                f.write(str(elem[0])+','+str(elem[1])+','+str(elem[3])+','+elem[2]+'\n')
             #
             # string = str(elem[0])+','+str(elem[1])+','+str(elem[2])+','+str(elem[3])+'\n'
             # f.write(string)
@@ -360,13 +341,7 @@ def printCSV(edgesGraph, listForVenn, nameDir,listBioNameUpdate):
 
     for k in listForVenn:
         listKey = sorted([u for u in k.keys()], key=len)
-        nameF = ''
         lenMax = len(sorted([u for u in listKey if len(u.split(',')) == 1]))
-        for g in sorted([u for u in listKey if len(u.split(',')) == 1]):
-            if nameF == '':
-                nameF = g.split('\'')[1]
-            else:
-                nameF += '_'+g.split('\'')[1]
         #Print .csv for each combination of genes of LGN. They contain the list of genes associated to that combination
         #FIX
         i = 2
@@ -377,26 +352,25 @@ def printCSV(edgesGraph, listForVenn, nameDir,listBioNameUpdate):
         for key in listKey:
             if len(key.split(',')) != lenMax:
                 if len(key.split(',')) == 1:
-                    nameFile = ''
-                    for g in sorted(key.split('\'')):
-                        if len(g) > 4:
-                            if nameFile == '':
-                                nameFile = g
-                            else:
-                                nameFile += '_'+g
-                    nameF = nameF.replace("<", "_")
-                    nameF = nameF.replace(">", "_")
+                    nameFile = key.split('\'')[1]
                     nameFile = nameFile.replace("<", "_")
                     nameFile = nameFile.replace(">", "_")
                     f = open(nameDir+str(listForVenn.index(k))+'/'+nameFile+'.csv', 'w')
                 else:
                     f = open(nameDir+str(listForVenn.index(k))+'/intersectionOF'+str(len(key.split(',')))+'genes'+str(dictNumFile[len(key.split(','))])+'.csv', 'w')
                     dictNumFile[len(key.split(','))] = dictNumFile[len(key.split(','))]+1
+                    for g in sorted(key.split('\'')):
+                        if len(g) > 4:
+                            if nameFile == '':
+                                nameFile = g
+                            else:
+                                nameFile += '_'+g
+                    nameFile = nameFile.replace("<", "_")
+                    nameFile = nameFile.replace(">", "_")
                 f.write(nameFile+',rank,frel,'+lineIntro+'\n')
                 for elem in k[str(key)]:
                     try:
-                        f.write(str(elem[0])+','+str(elem[1])+','+str(elem[3])+','+dictStrToWrite[(list(listBioNameUpdate.keys())[list(listBioNameUpdate.values()).index(elem[2])])]+'\n')
+                        f.write(str(elem[0])+','+str(elem[1])+','+str(elem[3])+','+dictStrToWrite[elem[2]]+'\n')
                     except:
                         f.write(str(elem[0])+','+str(elem[1])+','+str(elem[3])+','+str(elem[2])+'\n')
-
                 f.close()
