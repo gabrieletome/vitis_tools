@@ -3,6 +3,6 @@ networkOutput/
 graph_NESRA_LGNexp.py
 __pycache__
 memeSuite/
+*.csv
 example_lists/Esempio_STS.zip
 example_lists/Esempio_STS/
-*.csv
