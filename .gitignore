@@ -5,3 +5,4 @@ __pycache__
 memeSuite/
 example_lists/Esempio_STS.zip
 example_lists/Esempio_STS/
+*.csv

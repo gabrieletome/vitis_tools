@@ -24,7 +24,7 @@ def filterRank(listGenes, rank):
             newListGenes.append(g)
     return newListGenes
 
-#Return all tuples with at least one pattern inside 'functional annotation' or  'Network1' columns
+#Return all tuples with at least one pattern inside 'Network1' or  'Network2' columns
 def filterType(listGenes, patterns):
     newListGenes = [listGenes[0]]
     i = 1

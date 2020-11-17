@@ -26,7 +26,9 @@ def readParameters(input):
     listFilter = []
     i = 1
     while i < len(input):
-        if re.search(r'^-\w$', input[i]):
+        if re.search(r'^-\w$', input[i]) or re.search(r'^-pattern$', input[i]):
+            if re.search(r'^-pattern$', input[i]):
+                typeAnalyze = 3
             filterParam = (input[i],)
             i += 1
             endloop = False
@@ -97,7 +99,7 @@ def main():
     if len(sys.argv) >= 2:
         if sys.argv[1] == '--help':
             utex.printInfo()
-        elif sys.argv[1] == '-vitis' and (sys.argv[2] == '-shared' or sys.argv[2] == '-rank' or sys.argv[2] == '-frel'):
+        elif sys.argv[1] == '-vitis' and (sys.argv[2] == '-shared' or sys.argv[2] == '-rank' or sys.argv[2] == '-frel' or sys.argv[2] == '-pattern'):
             #read parameters
             cmd = readParameters(sys.argv)
             for f in cmd[1]:
@@ -125,14 +127,14 @@ def main():
 
             #find common genes
             listCommonGenes = utex.findCommonGenes(listCouple, listFiles)
-            if typeAnalyze == 0 or typeAnalyze == 1: #frel or rank
-                edgesGraph = utex.buildEdgesFrelRank(listCouple, listFiles)
+            if typeAnalyze == 0 or typeAnalyze == 1 or typeAnalyze == 3: #frel or rank or pattern
+                edgesGraph = utex.buildEdgesFrelRankPattern(listCouple, listFiles)
             elif typeAnalyze == 2: #shared
                 edgesGraph = listCommonGenes[0]
 
             #print CSV with genes share between every gene of LGN
             createDir()
-            utex.printCSV(edgesGraph, listCommonGenes[1], nameDir)
+            utex.printCSV(edgesGraph, listCommonGenes[1], nameDir, typeAnalyze)
             #Draw the Venn diagram, Histogram
             if printDiagram:
                 utex.printNumberVenn(listCommonGenes, nameDir)
@@ -185,21 +187,8 @@ def main():
 
                 #Calculating pearson correlation for each edge
                 print('Calculating Pearson correlation...')
-                #listForPearson = [((list(listBioNameUpdate.keys())[list(listBioNameUpdate.values()).index(a)]),(list(listBioNameUpdate.keys())[list(listBioNameUpdate.values()).index(c)]),d) for (a,b,c,d) in l[1:]]
-                #TODEL_GT-001
-                # dictConvert = {}
-                # for elem in l[1:]:
-                #     if elem[0] != 'GT-001':
-                #         dictConvert[(list(listBioNameUpdate.keys())[list(listBioNameUpdate.values()).index(elem[0])])] = elem[0]
-                #     if elem[2] != 'GT-001':
-                #         dictConvert[(list(listBioNameUpdate.keys())[list(listBioNameUpdate.values()).index(elem[2])])] = elem[2]
                 listForPearson = [(a,c,d) for (a,b,c,d) in l[1:]]
                 pearsonComplete.append(ut.pearsonCorrelation(listForPearson, 'vv_exprdata_2.csv'))
-                #pearson = [(listBioNameUpdate[u],listBioNameUpdate[v],p) for (u,v,p) in tmp]
-                #TODEL_GT-001
-                #pearson = [(listBioNameUpdate[u],listBioNameUpdate[v],p) for (u,v,p) in tmp]+[((list(listBioNameUpdate.keys())[list(listBioNameUpdate.values()).index(a)]),(list(listBioNameUpdate.keys())[list(listBioNameUpdate.values()).index(c)]),1) for (a,b,c,d) in l[1:] if a == 'GT-001' or c == 'GT-001']
-                #pearson = [(dictConvert[[w for w in u.split('<BR>') if w in dictConvert.keys()][0]],dictConvert[[w for w in v.split('<BR>') if w in dictConvert.keys()][0]],p) for (u,v,p) in tmp]+[((list(listBioNameUpdate.keys())[list(listBioNameUpdate.values()).index(a)]),(list(listBioNameUpdate.keys())[list(listBioNameUpdate.values()).index(c)]),1) for (a,b,c,d) in l[1:] if a == 'GT-001' or c == 'GT-001']
-                #pearsonComplete.append(pearson)
                 print('Pearson Correlation done')
             #Draw graph
             graphic.printCommonGraph(edgesGraph, pearsonComplete, 1-min_frel, nameDir, autoSaveImg)

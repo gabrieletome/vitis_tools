@@ -13,6 +13,7 @@ def printInfo():
     print('\t-frel\tBuild expansion network based on FREL. Required filter \'-f\'')
     print('\t-rank [INT]\tBuild expansion network based on RANK. Take top genes')
     print('\t-shared\tBuild expansion network based on SHARED GENES.')
+    print('\t-pattern [PATTERNS]\tBuild expansion network based on genes that have at least one patterns in \'Network1\' or \'Network2\' columns')
     print('FILTERS:')
     print('\t-a\t\t\tAutosave image of graphs. If -a is present, it save automatically .png. USE IN MICROSOFT WINDOWS')
     print('\t-c\t\t\tAdd edges between associated genes')
@@ -99,7 +100,7 @@ def buildNamefile(l):
         else:
             nameF += '_'+g
     return nameF
-    
+
 #Switch the filter to the correct function
 #Return list of genes filtered
 def applyFilter(listGenes, filter):
@@ -107,6 +108,8 @@ def applyFilter(listGenes, filter):
         listGenes = filters.filterFrel(listGenes, float(filter[1]))
     elif filter[0] == '-rank' and len(filter) == 2:
         listGenes = filters.filterRank(listGenes, int(filter[1]))
+    elif filter[0] == '-pattern' and len(filter) >= 2:
+        listGenes = filters.filterType(listGenes, filter[1:])
     elif (filter[0] == '-a' or filter[0] == '-c' or filter[0] == '-e') and len(filter) >= 1:
         #already managed
         pass
@@ -295,7 +298,7 @@ def findCommonGenes(couples, listFiles):
     return (listCommonGenes, listForVenn)
 
 #Build Edges for frel and rank
-def buildEdgesFrelRank(listCouple, listFiles):
+def buildEdgesFrelRankPattern(listCouple, listFiles):
     listsEdges = []
     for lgn in listCouple:
         innerListEdges = [lgn]
@@ -307,7 +310,7 @@ def buildEdgesFrelRank(listCouple, listFiles):
     return listsEdges
 
 #
-def printCSV(edgesGraph, listForVenn, nameDir):
+def printCSV(edgesGraph, listForVenn, nameDir, typeAnalyze):
     print("Printing CSV...")
     #Read information of Vitis genes
     f = open('import_doc/NewAnnotVitisnet3.csv', 'r')
@@ -339,38 +342,39 @@ def printCSV(edgesGraph, listForVenn, nameDir):
             # f.write(string)
         f.close();
 
-    for k in listForVenn:
-        listKey = sorted([u for u in k.keys()], key=len)
-        lenMax = len(sorted([u for u in listKey if len(u.split(',')) == 1]))
-        #Print .csv for each combination of genes of LGN. They contain the list of genes associated to that combination
-        #FIX
-        i = 2
-        dictNumFile = {}
-        while i < lenMax:
-            dictNumFile[i] = 1
-            i += 1
-        for key in listKey:
-            if len(key.split(',')) != lenMax:
-                if len(key.split(',')) == 1:
-                    nameFile = key.split('\'')[1]
-                    nameFile = nameFile.replace("<", "_")
-                    nameFile = nameFile.replace(">", "_")
-                    f = open(nameDir+str(listForVenn.index(k))+'/'+nameFile+'.csv', 'w')
-                else:
-                    f = open(nameDir+str(listForVenn.index(k))+'/intersectionOF'+str(len(key.split(',')))+'genes'+str(dictNumFile[len(key.split(','))])+'.csv', 'w')
-                    dictNumFile[len(key.split(','))] = dictNumFile[len(key.split(','))]+1
-                    for g in sorted(key.split('\'')):
-                        if len(g) > 4:
-                            if nameFile == '':
-                                nameFile = g
-                            else:
-                                nameFile += '_'+g
-                    nameFile = nameFile.replace("<", "_")
-                    nameFile = nameFile.replace(">", "_")
-                f.write(nameFile+',rank,frel,'+lineIntro+'\n')
-                for elem in k[str(key)]:
-                    try:
-                        f.write(str(elem[0])+','+str(elem[1])+','+str(elem[3])+','+dictStrToWrite[elem[2]]+'\n')
-                    except:
-                        f.write(str(elem[0])+','+str(elem[1])+','+str(elem[3])+','+str(elem[2])+'\n')
-                f.close()
+    if typeAnalyze == 2:
+        for k in listForVenn:
+            listKey = sorted([u for u in k.keys()], key=len)
+            lenMax = len(sorted([u for u in listKey if len(u.split(',')) == 1]))
+            #Print .csv for each combination of genes of LGN. They contain the list of genes associated to that combination
+            #FIX
+            i = 2
+            dictNumFile = {}
+            while i < lenMax:
+                dictNumFile[i] = 1
+                i += 1
+            for key in listKey:
+                if len(key.split(',')) != lenMax:
+                    if len(key.split(',')) == 1:
+                        nameFile = key.split('\'')[1]
+                        nameFile = nameFile.replace("<", "_")
+                        nameFile = nameFile.replace(">", "_")
+                        f = open(nameDir+str(listForVenn.index(k))+'/'+nameFile+'.csv', 'w')
+                    else:
+                        f = open(nameDir+str(listForVenn.index(k))+'/intersectionOF'+str(len(key.split(',')))+'genes'+str(dictNumFile[len(key.split(','))])+'.csv', 'w')
+                        dictNumFile[len(key.split(','))] = dictNumFile[len(key.split(','))]+1
+                        for g in sorted(key.split('\'')):
+                            if len(g) > 4:
+                                if nameFile == '':
+                                    nameFile = g
+                                else:
+                                    nameFile += '_'+g
+                        nameFile = nameFile.replace("<", "_")
+                        nameFile = nameFile.replace(">", "_")
+                    f.write(nameFile+',rank,frel,'+lineIntro+'\n')
+                    for elem in k[str(key)]:
+                        try:
+                            f.write(str(elem[0])+','+str(elem[1])+','+str(elem[3])+','+dictStrToWrite[elem[2]]+'\n')
+                        except:
+                            f.write(str(elem[0])+','+str(elem[1])+','+str(elem[3])+','+str(elem[2])+'\n')
+                    f.close()

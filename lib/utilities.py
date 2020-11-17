@@ -12,7 +12,7 @@ def printInfo():
     print('FILTERS:')
     print('\t-a\t\t\tAutosave image of graphs. If -a is present, it save automatically .png. USE IN MICROSOFT WINDOWS')
     print('\t-f [NUMBER]\t\tIgnored genes with frel<=NUMBER')
-    print('\t-t [PATTERN,...]\tTake genes that in \'functional annotation\' or \'Network1\' column there is at least one pattern')
+    print('\t-t [PATTERN,...]\tTake genes that in \'Network1\' or \'Network2\' columns there is at least one pattern')
     sys.exit(-1)
 
 #Read the filter parameters and gene list name files
@@ -249,10 +249,10 @@ def readFilesVitis(filename):
     for i in listCells:
         if not len(i) < 5:
             try:
-                #add new tuple: (rank, node, Frel, functional-annotation, network1)
+                #add new tuple: (rank, node, Frel, network1, network2)
                 #possible add more parameters
                 try:
-                    tuple = (int(i[0]), i[1].upper(), float(i[3]), i[4], i[7])
+                    tuple = (int(i[0]), i[1].upper(), float(i[3]), i[7], i[8])
                 except:
                     tuple = (int(i[0]), i[1].upper(), float(i[3]))
                 listTuples.append(tuple)
