@@ -1,5 +1,5 @@
 # Tools_Expand_Genes_Network
- Tools used to analyze and expand gene networks of Vitis Vinifera and Human. All this tools used Python 3.
+ Tools used to analyze and expand gene networks of Vitis Vinifera. All this tools used Python 3.
 
 ## Prerequisites
  Python 3
@@ -41,7 +41,7 @@
     pip3 install rectangle-packer
    ```
 
- 
+
  For *biological_validation.py* is required R with [*topGO*](https://bioconductor.org/packages/release/bioc/html/topGO.html) and [DREME](http://meme-suite.org/doc/dreme.html) form MEME suite.
    Install *topGO* library:
    ```
@@ -51,7 +51,7 @@
     BiocManager::install("topGO")
    ```
    Install DREME: [DREME tool](http://meme-suite.org/doc/download.html)
-   
+
 ## TOOL 1: *managerList.py*
 Tool used to build the complete graph of interaction and find the LGN.
 How to use:
@@ -61,7 +61,7 @@ FILES can be a list of .csv or .zip. These are the expansion list from OneGenE
 FILTERS:
  '-a'             Autosave image of graphs. If -a is present, it save automatically .png. USE IN MICROSOFT WINDOWS
  '-f [NUMBER]'    Ignored genes with frel<=NUMBER
- '-t [PATTERN,...]'      Take genes that in 'functional annotation' or 'Network1' column there is at least one pattern
+ '-t [PATTERN,...]'      Take genes that in 'Network1' or 'Network2' column there is at least one pattern
 ```
 Example with Cuticle genes:
 ```
@@ -78,9 +78,10 @@ How to use:
 ```
 Usage: python3 integrateCoupleGenes.py -vitis TYPEA [FILTERS]... -files [GENES] [FILES]...
 TYPEA:
- '-frel'        Build expansion network based on FREL. Required filter '-f'
- '-rank [INT]'  Build expansion network based on RANK. Take top genes
- '-shared'      Build expansion network based on SHARED GENES
+ '-frel'                Build expansion network based on FREL. Required filter '-f'
+ '-rank [INT]'          Build expansion network based on RANK. Take top genes
+ '-shared'              Build expansion network based on SHARED GENES
+ '-pattern [PATTERNS]'  Build expansion network based on genes that have at least one patterns in 'Network1' or 'Network2' columns
 FILTERS:
  '-a'           Autosave image of graphs. If -a is present, it save automatically .png. USE IN MICROSOFT WINDOWS
  '-c'           Add edges between associated genes
@@ -92,6 +93,8 @@ FILES can be a list of .csv or .zip
 Example with Cuticle genes:
 ```
 python3 integrateCoupleGenes.py -vitis -shared -f 0.1 -e -a -files CoupleGeneToIntegrate/coupleGene0.csv example_lists/Vitis_7genes_MYB-ERF/Example.zip
+
+python3 integrateCoupleGenes.py -vitis -pattern vv60 -f 0.1 -e -a -files CoupleGeneToIntegrate/GroupB_STS.csv example_lists/Esempio_STS/StSyMYB.zip
 ```
 Help:
 ```
