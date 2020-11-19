@@ -5,4 +5,3 @@ networkOutput/
 graph_NESRA_LGNexp.py
 __pycache__
 memeSuite/
-*.csv
