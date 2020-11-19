@@ -1,3 +1,5 @@
+.gitignore
+.gitattributes
 commonGenesOutput/
 networkOutput/
 graph_NESRA_LGNexp.py
