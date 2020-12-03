@@ -99,6 +99,8 @@ def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, typeP
     pos = comp.layout_many_components(G, component_layout_func=nx.layout.circular_layout)
     if typePrint:
         pos = comp.layout_many_components(G, component_layout_func=nx.layout.spring_layout)
+        #print Degree of graph
+        printDegree(G, idNode, namefile)
     # nodes
     n_size = 150
     f_size = 8
@@ -178,6 +180,8 @@ def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, typeP
     G.clear()
     plt.clf()
     plt.close()
+
+
 
 #Draw graph of expansion LGN
 def printCommonGraph(listCommonGenes, pearsonComplete, range_frel, nameDir, autoSaveImg):
@@ -344,6 +348,9 @@ def printCommonGraph(listCommonGenes, pearsonComplete, range_frel, nameDir, auto
             print('Create: \'graphGenes.png\'', flush=True)
         else:
             plt.show()
+
+        #print Degree of graph
+        printDegree(G, idNode, namefile)
         #Clean graph and pyplot
         G.clear()
         plt.clf()
@@ -556,3 +563,11 @@ def printHistogram(listCommonGenes, listFiles, nameDir):
         # plt.gcf().set_size_inches(tmp)
         plt.clf()
         plt.close()
+
+
+def printDegree(G, idNode, namefile):
+    f = open(namefile.split("Graph")[0]+'degree_nodes.txt', 'w')
+    f.write('Node,Degree\n')
+    for key in idNode.keys():
+        f.write(key+','+str(G.degree[idNode[key]])+'\n')
+    f.close()
