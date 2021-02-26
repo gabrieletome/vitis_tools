@@ -11,6 +11,8 @@ import lib.utilities as ut
 import lib.venn as vennD
 import re
 import random
+from networkx.readwrite import json_graph
+import json
 
 #Draw general graph
 def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, typePrint):
@@ -176,6 +178,9 @@ def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, typeP
         print('Create: \''+namefile+'.png\'', flush=True)
     else:
         plt.show()
+
+    with open(namefile+'.json', 'w', encoding='utf-8') as f:
+        json.dump(json_graph.node_link_data(G), f, ensure_ascii=False, indent=4)
     #Clean graph and pyplot
     G.clear()
     plt.clf()
