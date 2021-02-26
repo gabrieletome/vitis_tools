@@ -7,4 +7,3 @@ networkx
 numpy
 scipy
 rectangle-packer
-json

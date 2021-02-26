@@ -3,7 +3,11 @@
 
 ## Prerequisites
  Python 3
- Library of Python (install with pip3):
+ Use requirements.txt to install the required library:
+ ```
+  pip3 install -r requirements.txt
+ ```
+ <!-- Library of Python (install with pip3):
    * *datetime*
    ```
     pip3 install datetime
@@ -39,7 +43,7 @@
    * *rpack*
    ```
     pip3 install rectangle-packer
-   ```
+   ``` -->
 
 
  For *biological_validation.py* is required R with [*topGO*](https://bioconductor.org/packages/release/bioc/html/topGO.html) and [DREME](http://meme-suite.org/doc/dreme.html) form MEME suite.
