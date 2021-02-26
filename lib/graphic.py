@@ -180,8 +180,10 @@ def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, typeP
         plt.show()
 
     #Create json file of graph
-    with open(namefile+'.json', 'w', encoding='utf-8') as f:
-        json.dump(json_graph.node_link_data(G), f, ensure_ascii=False, indent=4)
+    if typePrint:
+        print('Create: \''+namefile+'.json\'', flush=True)
+        with open(namefile+'.json', 'w', encoding='utf-8') as f:
+            json.dump(json_graph.node_link_data(G), f, ensure_ascii=False, indent=4)
     #Clean graph and pyplot
     G.clear()
     plt.clf()
