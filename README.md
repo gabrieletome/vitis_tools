@@ -3,7 +3,8 @@
 
 ## Prerequisites
  Python 3
- Use requirements.txt to install the required library:
+
+ Use *requirements.txt* to install the required libraries:
  ```
   pip3 install -r requirements.txt
  ```
