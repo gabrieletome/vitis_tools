@@ -4,10 +4,14 @@
 ## Prerequisites
  Python 3
 
- Use *requirements.txt* to install the required libraries:
+ To install the required Python libraries and R packages:
  ```
-  pip3 install -r requirements.txt
+  ./setup.sh
  ```
+ <!-- Use *requirements.txt* to install the required libraries:
+ ```
+  pip3 install -r import_doc/requirements.txt
+ ``` -->
  <!-- Library of Python (install with pip3):
    * *datetime*
    ```
@@ -47,14 +51,14 @@
    ``` -->
 
 
- For *biological_validation.py* is required R with [*topGO*](https://bioconductor.org/packages/release/bioc/html/topGO.html) and [DREME](http://meme-suite.org/doc/dreme.html) form MEME suite.
-   Install *topGO* library:
+ For *biological_validation.py* could be request <!-- is required R with [*topGO*](https://bioconductor.org/packages/release/bioc/html/topGO.html) and --> [DREME](http://meme-suite.org/doc/dreme.html) from MEME suite.
+   <!-- Install *topGO* library:
    ```
     if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 
     BiocManager::install("topGO")
-   ```
+   ``` -->
    Install DREME: [DREME tool](http://meme-suite.org/doc/download.html)
 
 ## TOOL 1: *managerList.py*
