@@ -149,7 +149,7 @@ def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, typeP
     nameGenes = idNode.keys()
     dictStrToWrite = {}
     #Read information of Vitis genes
-    f = open('import_doc/NewAnnotVitisnet3.csv', 'r')
+    f = open('import_doc/AnnVitisNetV1_V3.csv', 'r')
     text = f.readlines()
     listLineName = []
     i = 1
@@ -160,13 +160,13 @@ def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, typeP
         if k in [u[0].upper() for u in listLineName]:
             index = [u[0].upper() for u in listLineName].index(k)
             u = listLineName[index]
-            dictStrToWrite[k] = str(u[0])+','+str(u[1])+','+str(u[2])+','+str(u[3])+','+str(u[4])+','+str(u[5])
+            dictStrToWrite[k] = str(u[0])+','+str(u[1])+','+str(u[2])+','+str(u[3])+','+str(u[4])+','+str(u[5])+','+str(u[6])
         else:
             dictStrToWrite[k] = str(k)+"\n"
     fileOut = namefile.split("Graph")[0]+'graph_legend_ID_NAME.csv'
     print('LEGEND IN: \''+fileOut+'\'')
     f = open(fileOut, 'w')
-    f.write('ID in graph,'+text[0].split(',')[0]+','+text[0].split(',')[1]+','+text[0].split(',')[2]+','+text[0].split(',')[3]+','+text[0].split(',')[4]+','+text[0].split(',')[5])
+    f.write('ID in graph,'+text[0].split(',')[0]+','+text[0].split(',')[1]+','+text[0].split(',')[2]+','+text[0].split(',')[3]+','+text[0].split(',')[4]+','+text[0].split(',')[5]+','+text[0].split(',')[6])
     for k in nameGenes:
         f.write(str(idNode[k])+','+dictStrToWrite[k])
     f.close()
@@ -179,6 +179,7 @@ def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, typeP
     else:
         plt.show()
 
+    #Create json file of graph
     with open(namefile+'.json', 'w', encoding='utf-8') as f:
         json.dump(json_graph.node_link_data(G), f, ensure_ascii=False, indent=4)
     #Clean graph and pyplot
@@ -321,7 +322,7 @@ def printCommonGraph(listCommonGenes, pearsonComplete, range_frel, nameDir, auto
         nameGenes = idNode.keys()
         dictStrToWrite = {}
         #Read information of Vitis genes
-        f = open('import_doc/NewAnnotVitisnet3.csv', 'r')
+        f = open('import_doc/AnnVitisNetV1_V3.csv', 'r')
         text = f.readlines()
         listLineName = []
         i = 1
@@ -332,13 +333,13 @@ def printCommonGraph(listCommonGenes, pearsonComplete, range_frel, nameDir, auto
             if k in [u[0].upper() for u in listLineName]:
                 index = [u[0].upper() for u in listLineName].index(k)
                 u = listLineName[index]
-                dictStrToWrite[k] = str(u[0])+','+str(u[1])+','+str(u[2])+','+str(u[3])+','+str(u[4])+','+str(u[5])
+                dictStrToWrite[k] = str(u[0])+','+str(u[1])+','+str(u[2])+','+str(u[3])+','+str(u[4])+','+str(u[5])+','+str(u[6])
             else:
                 dictStrToWrite[k] = str(k)+"\n"
         fileOut = namefile.split("graph")[0]+'graph_legend_ID_NAME.csv'
         print('LEGEND IN: \''+fileOut+'\'')
         f = open(fileOut, 'w')
-        f.write('ID in graph,'+text[0].split(',')[0]+','+text[0].split(',')[1]+','+text[0].split(',')[2]+','+text[0].split(',')[3]+','+text[0].split(',')[4]+','+text[0].split(',')[5])
+        f.write('ID in graph,'+text[0].split(',')[0]+','+text[0].split(',')[1]+','+text[0].split(',')[2]+','+text[0].split(',')[3]+','+text[0].split(',')[4]+','+text[0].split(',')[5]+','+text[0].split(',')[6])
         for k in nameGenes:
             f.write(str(idNode[k])+','+dictStrToWrite[k])
         f.close()
