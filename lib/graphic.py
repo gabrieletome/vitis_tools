@@ -13,6 +13,19 @@ import re
 import random
 from networkx.readwrite import json_graph
 import json
+import sys
+
+#trovo l indice di un nodo in listlinename
+def nodefounder(a,b,c):
+            quantograndelistlinename=len(a)
+            for y in range(quantograndelistlinename):
+                nododatrovare=b[c]
+                indicetrovato=y
+                #global indicenodotrovato
+                if (nododatrovare==a[y][0]):
+                    #indicetrovato=y 
+                    print(indicetrovato)
+                    return indicetrovato
 
 #Draw general graph
 def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, typePrint):
@@ -71,6 +84,10 @@ def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, typeP
     for e in edges:
         G.add_edge(e[0], e[1], weight=e[2])
 
+
+
+
+
     #print the connected components of the complete graph
     if len(list_Genes) > 0 and not typePrint:
         subgraphs = sorted(list(G.subgraph(c) for c in nx.connected_components(G)), key=len, reverse=True)
@@ -86,7 +103,7 @@ def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, typeP
                 f.write(str(lNodes)+'\n')
             i += 1
         f.close()
-        print('Create: '+namefiles[0]+"/"+namefiles[1]+'/complete_graph_connected_components.txt', flush=True)
+        #print('Create: '+namefiles[0]+"/"+namefiles[1]+'/complete_graph_connected_components.txt', flush=True)
 
     ePos = [(u, v) for (u, v, p) in newPearson if p >= 0]
     eNeg = [(u, v) for (u, v, p) in newPearson if p < 0]
@@ -164,7 +181,7 @@ def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, typeP
         else:
             dictStrToWrite[k] = str(k)+"\n"
     fileOut = namefile.split("Graph")[0]+'graph_legend_ID_NAME.csv'
-    print('LEGEND IN: \''+fileOut+'\'')
+    #print('LEGEND IN: \''+fileOut+'\'')
     f = open(fileOut, 'w')
     f.write('ID in graph,'+text[0].split(',')[0]+','+text[0].split(',')[1]+','+text[0].split(',')[2]+','+text[0].split(',')[3]+','+text[0].split(',')[4]+','+text[0].split(',')[5]+','+text[0].split(',')[6])
     for k in nameGenes:
@@ -175,16 +192,285 @@ def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, typeP
     #autoSave PNG or show
     if autoSaveImg:
         plt.savefig(namefile+'.png')
-        print('Create: \''+namefile+'.png\'', flush=True)
+        #print('Create: \''+namefile+'.png\'', flush=True)
     else:
         plt.show()
 
+
+
+    
+     
+    id_nodi_acasissimo=list(G.nodes)
+
     #Create json file of graph
     if typePrint:
-        G = nx.relabel_nodes(G, dict((v,k) for k,v in idNode.items()))
-        print('Create: \''+namefile+'.json\'', flush=True)
+        H = nx.relabel_nodes(G, dict((v,k) for k,v in idNode.items()))
+        #print('Create: \''+namefile+'.json\'', flush=True)
         with open(namefile+'.json', 'w', encoding='utf-8') as f:
             json.dump(json_graph.node_link_data(G), f, ensure_ascii=False, indent=4)
+            f.close
+
+
+
+        #JSON COMPATIBILE CON CYTOSCAPE//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        #H = G
+        #print('prontone')
+        #H=nx.relabel_nodes(H,dict)
+        lista_deinodi=list(H.nodes)
+        #print(lista_deinodi)
+        lista_degliarchi=list(G.edges)
+        #print(lista_degliarchi)
+        n_Archi=len(lista_degliarchi)
+        n_nodi=len(lista_deinodi)
+        lista_nodi_Archi=['nodes','edges']
+        id_nodes=[]
+        id_edges=[]
+
+
+        #///liste degli id/////////////////////////////
+        for x in range(n_nodi):
+            id_nodes.append(x)
+            id_nodes[x]=x
+        #print(id_nodes)
+        for x in range(n_Archi):
+            id_edges.append(x)
+            id_edges[x]=x
+        #print(id_edges)
+        listof_id=[]
+        listof_id.append(id_nodes)
+        listof_id.append(id_edges)
+        #print(listof_id)
+
+
+
+        #//creo l elemento data con gli attributi(dizionario di dizionari)//////////////////////////////////
+
+        data_nodes=[]
+        data_edges=[]
+        dizionario_nested_nodi={}
+        dizionario_nested_archi={}
+
+        for x in range(n_nodi):
+            #print(lista_deinodi[x])
+            i1={"id":lista_deinodi[x]}                                    #qui posso inserire attributi nuovi per i nodi
+            i2={"label":lista_deinodi[x]}
+            i3={"vit3":'inserire qui vit3'}
+            i4={"vit2":"inserire qui vit2"}
+
+            dizionario_nested_nodi={"data":(i1,i2,i3,i4)}
+
+            
+            data_nodes.append(x)
+            data_nodes[x]=dizionario_nested_nodi
+        #print(data_nodes)
+        n_attributi_nodi=4
+        n_attributi_archi=4
+        for x in range(n_Archi):
+            #print(lista_degliarchi[x])
+            i1={"id":x}                                                 #qui posso inserire attributi nuovi per gli archi
+            i2={"source":lista_degliarchi[x][0]}
+            i3={"target":lista_degliarchi[x][1]}
+            i4={"colourId":'boh'}
+            dizionario_nested_archi={"data":[i1,i2,i3,i4]}
+
+            
+            data_edges.append(x)
+            data_edges[x]=dizionario_nested_archi
+        #print(data_edges)
+        
+
+
+        #//////dizionario tra id e data//////////
+        id_data_n_diz={}
+        #id_data_n_diz=dict(zip(id_nodes,data_nodes))
+        #print(id_data_n_diz)
+
+        id_data_e_diz={}
+        #id_data_e_diz=dict(zip(id_edges,data_edges))
+        #print(id_data_e_diz)
+
+        sumofcosette=[]
+        sumofcosette.append(data_nodes)
+        sumofcosette.append(data_edges)
+
+        #Write legend ID-->GENE
+        
+        #print(listLineName)
+
+        #///////aggiungo id-data a nodes e edges//////////////////////////////////////////
+        dizionariobello={}
+        dizionariobello=dict(zip(lista_nodi_Archi,sumofcosette))
+        
+        spaghetti=list(G.edges)
+        quantograndelistlinename=len(listLineName)
+        dizzi={}
+        listabela=[]
+        for k in nameGenes:
+            if k in [u[0].upper() for u in listLineName]:
+                index = [u[0].upper() for u in listLineName].index(k)
+                u = listLineName[index]
+                listabela=[u[0],u[1],u[2],u[3],u[4],u[5],u[6]]
+                dizzi[k] = listabela
+            else:
+                dizzi[k] = str(k)+"\n"
+
+        #/////creo il file txt per poterlo modificere come testo e poi passarlo in un json///
+        open(namefile+'yo.json', 'w', encoding='utf-8') 
+        with open(namefile+'yo.json', 'a', encoding='utf-8') as f:
+            # f.write("lol"+dizionariobello['nodes'][1]['data'][1]['label'])
+            #f.write('{"elements":')
+            #spaghetti=list(G.edges)            
+            f.write('{"elements":')
+            f.write('{')
+            f.write('"nodes": [')
+            #indicenodotrovato
+            for x in range(n_nodi):
+                nodoattuale=lista_deinodi[x]              
+                f.write('{')
+                f.write('"data":')
+                f.write('  {')
+                f.write('"id":"'+str(id_nodi_acasissimo[x])+'",')
+                f.write('"label":"'+ lista_deinodi[x]+'",')
+                f.write('"functann":"'+dizzi[nodoattuale][1]+'",')
+                f.write('"nameEC":"'+dizzi[nodoattuale][2]+'",')
+                f.write('"gn":"'+dizzi[nodoattuale][3]+'",')
+                f.write('"vit3":"'+dizzi[nodoattuale][4]+'",')
+                f.write('"nw1":"'+dizzi[nodoattuale][5]+'",')
+                f.write('"nw2":"'+dizzi[nodoattuale][6]+'"')
+                f.write('}')
+                f.write('},')
+            f.write('],')
+            f.write('"edges": [')
+            for x in range(n_Archi):
+                f.write('{')
+                f.write('"data":')
+                f.write('  {')
+                f.write('"id":"e'+ str(x)+'",')
+                f.write('"source":"'+str(lista_degliarchi[x][0])+'",')
+                f.write('"target":"'+str(lista_degliarchi[x][1])+'",')
+                f.write('"weight":"'+'",')
+                f.write('"codec":')
+                
+                if (spaghetti[x][0],spaghetti[x][1]) in estrongPos:
+                    f.write('"1"')
+                elif (spaghetti[x][0],spaghetti[x][1]) in estrongNeg:
+                    f.write('"2"')
+                elif (spaghetti[x][0],spaghetti[x][1]) in emediumPos:
+                    f.write('"3"')
+                elif (spaghetti[x][0],spaghetti[x][1]) in emediumNeg:
+                    f.write('"4"')
+                elif  (spaghetti[x][0],spaghetti[x][1])in eweakPos:
+                    f.write('"5"')
+                else:
+                    f.write('"6"')
+                
+                f.write('}')
+                f.write('},')
+            f.write(']')
+            f.write('}')
+            f.write('}')
+            f.close
+
+            #da printare su terminale//////
+            '''
+            spaghetti=list(G.edges)
+            print('{')
+            print('\t'+'"nodes": [')
+            for x in range(n_nodi):
+                print('\t\t\t'+'   {')
+                print('\t\t\t\t'+'"data":')
+                print('\t\t\t\t'+'  {')
+                print('\t\t\t\t\t'+'"id":"'+ str(x)+'",')
+                print('\t\t\t\t\t'+'"label":"'+ lista_deinodi[x]+'",')
+                print('\t\t\t\t\t'+'"vit3":"'+'",')
+                print('\t\t\t\t\t'+'"vit2":"'+'"')
+                print('\t\t\t\t'+'}')
+                print('\t\t\t     },')
+            print('\t\t\t],')
+            print('\t'+'"edges": [')
+            for x in range(n_Archi):
+                print('\t\t\t'+'   {')
+                print('\t\t\t\t'+'"data":')
+                print('\t\t\t\t'+'  {')
+                print('\t\t\t\t\t'+'"id":"'+ str(x)+'",')
+                print('\t\t\t\t\t'+'"source":"'+lista_degliarchi[x][0]+'",')
+                print('\t\t\t\t\t'+'"target":"'+lista_degliarchi[x][1]+'",')
+                print('\t\t\t\t\t'+'"wheight":"'+'",')
+                print('\t\t\t\t\t'+'"colourId":')
+                if (spaghetti[x][0],spaghetti[x][1]) in estrongPos:
+                    print('"estrongpos"')
+                elif (spaghetti[x][0],spaghetti[x][1]) in estrongNeg:
+                    print('"estrongneg"')
+                elif (spaghetti[x][0],spaghetti[x][1]) in emediumPos:
+                    print('"emediumpos"')
+                elif (spaghetti[x][0],spaghetti[x][1]) in emediumNeg:
+                    print('"emediumneg"')
+                elif  (spaghetti[x][0],spaghetti[x][1])in eweakPos:
+                    print('"eweakpos"')
+                else:
+                    print('"eweakneg"')
+                print('\t\t\t\t'+'}')
+                print('\t\t\t     },')
+            print('\t\t\t]')
+            print('}')
+            print(spaghetti)
+            #print(lista_deinodi)
+            #print(lista_degliarchi)
+            print(estrongNeg)
+            #print(ePos)
+            #print(eNeg)
+            '''
+        
+        #modifico json///////////////////////////////////
+        polenta=[]
+        with open(namefile+'yo.json', 'r', encoding='utf-8') as f:    
+            polenta=f.read()
+            #print(polenta)
+        polentaold=polenta
+        pattern1= re.compile(r'\,\]')
+        pattern2= re.compile(r'\,')
+        pattern3=re.compile(r'\[')
+        pattern4=re.compile(r'\]')
+        pattern5=re.compile(r'\{')
+        pattern6=re.compile(r'\}')
+        pattern7=re.compile(r'\n\"')
+
+        if pattern1.search(polenta):
+            polenta=pattern1.sub(r']',polenta)
+        if pattern7.search(polenta):
+            polenta=pattern7.sub(r'"',polenta)
+        if pattern2.search(polenta):
+            polenta=pattern2.sub(r',\n',polenta)
+        if pattern3.search(polenta):
+            polenta=pattern3.sub(r'[\n',polenta)
+        if pattern4.search(polenta):
+            polenta=pattern4.sub(r']\n',polenta)
+        if pattern5.search(polenta):
+            polenta=pattern5.sub(r'{\n',polenta)
+        if pattern6.search(polenta):
+            polenta=pattern6.sub(r'}\n',polenta)
+        
+        
+        stampare=polenta    
+        f=open(namefile+'final.json', 'w', encoding='utf-8')
+        f.write(stampare)
+        f.close
+        #print(polenta)
+
+        '''
+        filetesto = open(namefile+"yo.txt","r")
+        polentaold=filetesto.read()
+        polenta=polentaold
+        pattern= re.compile(r',]')
+        with open("yo.txt") as f:
+            for line in f:
+                if pattern.search(line):
+                    polenta=pattern.sub(r']',polenta)
+        '''
+
+    #/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+              
     #Clean graph and pyplot
     G.clear()
     plt.clf()
@@ -360,10 +646,285 @@ def printCommonGraph(listCommonGenes, pearsonComplete, range_frel, nameDir, auto
 
         #print Degree of graph
         printDegree(G, idNode, namefile)
-        #Clean graph and pyplot
-        G.clear()
-        plt.clf()
-        plt.close()
+
+
+
+        #Create json file of graph
+    
+        H = nx.relabel_nodes(G, dict((v,k) for k,v in idNode.items()))
+        #print('Create: \''+namefile+'.json\'', flush=True)
+        with open(namefile+'.json', 'w', encoding='utf-8') as f:
+            json.dump(json_graph.node_link_data(G), f, ensure_ascii=False, indent=4)
+            f.close
+
+
+        id_nodi_acasissimo=list(G.nodes)
+        #JSON COMPATIBILE CON CYTOSCAPE//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        #H = G
+        #print('prontone')
+        #H=nx.relabel_nodes(H,dict)
+        lista_deinodi=list(H.nodes)
+        #print(lista_deinodi)
+        lista_degliarchi=list(G.edges)
+        #print(lista_degliarchi)
+        n_Archi=len(lista_degliarchi)
+        n_nodi=len(lista_deinodi)
+        lista_nodi_Archi=['nodes','edges']
+        id_nodes=[]
+        id_edges=[]
+
+
+        #///liste degli id/////////////////////////////
+        for x in range(n_nodi):
+            id_nodes.append(x)
+            id_nodes[x]=x
+        #print(id_nodes)
+        for x in range(n_Archi):
+            id_edges.append(x)
+            id_edges[x]=x
+        #print(id_edges)
+        listof_id=[]
+        listof_id.append(id_nodes)
+        listof_id.append(id_edges)
+        #print(listof_id)
+
+
+
+        #//creo l elemento data con gli attributi(dizionario di dizionari)//////////////////////////////////
+
+        data_nodes=[]
+        data_edges=[]
+        dizionario_nested_nodi={}
+        dizionario_nested_archi={}
+
+        for x in range(n_nodi):
+            #print(lista_deinodi[x])
+            i1={"id":lista_deinodi[x]}                                    #qui posso inserire attributi nuovi per i nodi
+            i2={"label":lista_deinodi[x]}
+            i3={"vit3":'inserire qui vit3'}
+            i4={"vit2":"inserire qui vit2"}
+
+            dizionario_nested_nodi={"data":(i1,i2,i3,i4)}
+
+            
+            data_nodes.append(x)
+            data_nodes[x]=dizionario_nested_nodi
+        #print(data_nodes)
+        n_attributi_nodi=4
+        n_attributi_archi=4
+        for x in range(n_Archi):
+            #print(lista_degliarchi[x])
+            i1={"id":x}                                                 #qui posso inserire attributi nuovi per gli archi
+            i2={"source":lista_degliarchi[x][0]}
+            i3={"target":lista_degliarchi[x][1]}
+            i4={"colourId":'boh'}
+            dizionario_nested_archi={"data":[i1,i2,i3,i4]}
+
+            
+            data_edges.append(x)
+            data_edges[x]=dizionario_nested_archi
+        #print(data_edges)
+        
+
+
+        #//////dizionario tra id e data//////////
+        id_data_n_diz={}
+        #id_data_n_diz=dict(zip(id_nodes,data_nodes))
+        #print(id_data_n_diz)
+
+        id_data_e_diz={}
+        #id_data_e_diz=dict(zip(id_edges,data_edges))
+        #print(id_data_e_diz)
+
+        sumofcosette=[]
+        sumofcosette.append(data_nodes)
+        sumofcosette.append(data_edges)
+
+        #Write legend ID-->GENE
+        
+        #print(listLineName)
+
+        #///////aggiungo id-data a nodes e edges//////////////////////////////////////////
+        dizionariobello={}
+        dizionariobello=dict(zip(lista_nodi_Archi,sumofcosette))
+        
+        spaghetti=list(G.edges)
+        quantograndelistlinename=len(listLineName)
+        dizzi={}
+        listabela=[]
+        for k in nameGenes:
+            if k in [u[0].upper() for u in listLineName]:
+                index = [u[0].upper() for u in listLineName].index(k)
+                u = listLineName[index]
+                listabela=[u[0],u[1],u[2],u[3],u[4],u[5],u[6]]
+                dizzi[k] = listabela
+            else:
+                dizzi[k] = str(k)+"\n"
+
+        #/////creo il file txt per poterlo modificere come testo e poi passarlo in un json///
+        open(namefile+'yo.json', 'w', encoding='utf-8') 
+        with open(namefile+'yo.json', 'a', encoding='utf-8') as f:
+            # f.write("lol"+dizionariobello['nodes'][1]['data'][1]['label'])
+            #f.write('{"elements":')
+            #spaghetti=list(G.edges)            
+            f.write('{"elements":')
+            f.write('{')
+            f.write('"nodes": [')
+            #indicenodotrovato
+            for x in range(n_nodi):
+                nodoattuale=lista_deinodi[x]              
+                f.write('{')
+                f.write('"data":')
+                f.write('  {')
+                f.write('"id":"'+str(id_nodi_acasissimo[x])+'",')
+                f.write('"label":"'+ lista_deinodi[x]+'",')
+                f.write('"functann":"'+dizzi[nodoattuale][1]+'",')
+                f.write('"nameEC":"'+dizzi[nodoattuale][2]+'",')
+                f.write('"gn":"'+dizzi[nodoattuale][3]+'",')
+                f.write('"vit3":"'+dizzi[nodoattuale][4]+'",')
+                f.write('"nw1":"'+dizzi[nodoattuale][5]+'",')
+                f.write('"nw2":"'+dizzi[nodoattuale][6]+'"')
+                f.write('}')
+                f.write('},')
+            f.write('],')
+            f.write('"edges": [')
+            for x in range(n_Archi):
+                f.write('{')
+                f.write('"data":')
+                f.write('  {')
+                f.write('"id":"e'+ str(x)+'",')
+                f.write('"source":"'+str(lista_degliarchi[x][0])+'",')
+                f.write('"target":"'+str(lista_degliarchi[x][1])+'",')
+                f.write('"weight":"'+'",')
+                f.write('"codec":')
+                
+                if (spaghetti[x][0],spaghetti[x][1]) in estrongPos:
+                    f.write('"1"')
+                elif (spaghetti[x][0],spaghetti[x][1]) in estrongNeg:
+                    f.write('"2"')
+                elif (spaghetti[x][0],spaghetti[x][1]) in emediumPos:
+                    f.write('"3"')
+                elif (spaghetti[x][0],spaghetti[x][1]) in emediumNeg:
+                    f.write('"4"')
+                elif  (spaghetti[x][0],spaghetti[x][1])in eweakPos:
+                    f.write('"5"')
+                else:
+                    f.write('"6"')
+                
+                f.write('}')
+                f.write('},')
+            f.write(']')
+            f.write('}')
+            f.write('}')
+            f.close
+
+            #da printare su terminale//////
+            '''
+            spaghetti=list(G.edges)
+            print('{')
+            print('\t'+'"nodes": [')
+            for x in range(n_nodi):
+                print('\t\t\t'+'   {')
+                print('\t\t\t\t'+'"data":')
+                print('\t\t\t\t'+'  {')
+                print('\t\t\t\t\t'+'"id":"'+ str(x)+'",')
+                print('\t\t\t\t\t'+'"label":"'+ lista_deinodi[x]+'",')
+                print('\t\t\t\t\t'+'"vit3":"'+'",')
+                print('\t\t\t\t\t'+'"vit2":"'+'"')
+                print('\t\t\t\t'+'}')
+                print('\t\t\t     },')
+            print('\t\t\t],')
+            print('\t'+'"edges": [')
+            for x in range(n_Archi):
+                print('\t\t\t'+'   {')
+                print('\t\t\t\t'+'"data":')
+                print('\t\t\t\t'+'  {')
+                print('\t\t\t\t\t'+'"id":"'+ str(x)+'",')
+                print('\t\t\t\t\t'+'"source":"'+lista_degliarchi[x][0]+'",')
+                print('\t\t\t\t\t'+'"target":"'+lista_degliarchi[x][1]+'",')
+                print('\t\t\t\t\t'+'"wheight":"'+'",')
+                print('\t\t\t\t\t'+'"colourId":')
+                if (spaghetti[x][0],spaghetti[x][1]) in estrongPos:
+                    print('"estrongpos"')
+                elif (spaghetti[x][0],spaghetti[x][1]) in estrongNeg:
+                    print('"estrongneg"')
+                elif (spaghetti[x][0],spaghetti[x][1]) in emediumPos:
+                    print('"emediumpos"')
+                elif (spaghetti[x][0],spaghetti[x][1]) in emediumNeg:
+                    print('"emediumneg"')
+                elif  (spaghetti[x][0],spaghetti[x][1])in eweakPos:
+                    print('"eweakpos"')
+                else:
+                    print('"eweakneg"')
+                print('\t\t\t\t'+'}')
+                print('\t\t\t     },')
+            print('\t\t\t]')
+            print('}')
+            print(spaghetti)
+            #print(lista_deinodi)
+            #print(lista_degliarchi)
+            print(estrongNeg)
+            #print(ePos)
+            #print(eNeg)
+            '''
+        
+        #modifico json///////////////////////////////////
+        polenta=[]
+        with open(namefile+'yo.json', 'r', encoding='utf-8') as f:    
+            polenta=f.read()
+            #print(polenta)
+        polentaold=polenta
+        pattern1= re.compile(r'\,\]')
+        pattern2= re.compile(r'\,')
+        pattern3=re.compile(r'\[')
+        pattern4=re.compile(r'\]')
+        pattern5=re.compile(r'\{')
+        pattern6=re.compile(r'\}')
+        pattern7=re.compile(r'\n\"')
+
+        if pattern1.search(polenta):
+            polenta=pattern1.sub(r']',polenta)
+        if pattern7.search(polenta):
+            polenta=pattern7.sub(r'"',polenta)
+        if pattern2.search(polenta):
+            polenta=pattern2.sub(r',\n',polenta)
+        if pattern3.search(polenta):
+            polenta=pattern3.sub(r'[\n',polenta)
+        if pattern4.search(polenta):
+            polenta=pattern4.sub(r']\n',polenta)
+        if pattern5.search(polenta):
+            polenta=pattern5.sub(r'{\n',polenta)
+        if pattern6.search(polenta):
+            polenta=pattern6.sub(r'}\n',polenta)
+        
+        
+        stampare=polenta    
+        f=open(namefile+'final.json', 'w', encoding='utf-8')
+        f.write(stampare)
+        f.close
+        #print(polenta)
+
+        '''
+        filetesto = open(namefile+"yo.txt","r")
+        polentaold=filetesto.read()
+        polenta=polentaold
+        pattern= re.compile(r',]')
+        with open("yo.txt") as f:
+            for line in f:
+                if pattern.search(line):
+                    polenta=pattern.sub(r']',polenta)
+        '''
+
+    #/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+              
+    #Clean graph and pyplot
+    G.clear()
+    plt.clf()
+    plt.close()
+
+    
+    
 
 #Draw Venn Diagram of common genes
 def printVenn(listForVenn, couples, nameDir):
@@ -580,3 +1141,16 @@ def printDegree(G, idNode, namefile):
     for key in idNode.keys():
         f.write(key+','+str(G.degree[idNode[key]])+'\n')
     f.close()
+
+
+'''
+def nodefounder(a,b,c):
+    quantograndelistlinename=len(a)
+    for y in range(quantograndelistlinename):
+        nododatrovare=b[c]
+        indicetrovato=y
+        #global indicenodotrovato
+        if (nododatrovare==a[y][0]):
+            #indicetrovato=y 
+            print(indicetrovato)
+            return indicetrovato'''

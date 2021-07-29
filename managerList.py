@@ -11,8 +11,10 @@ def main():
         elif sys.argv[1] == '-vitis':
             #read parameters
             cmd = ut.readParameters(sys.argv)
+            #print(type(cmd[1]))
             #build matrix of genes
             matrixGenes = vitis.buildMatrixGenesVitis(cmd[0], cmd[1])
+            #print(matrixGenes)
             print('Build matrix successfully', flush=True)
             #build graph of interaction between genes
             print("Building complete graph...", flush=True)

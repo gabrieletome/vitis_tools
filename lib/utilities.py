@@ -42,7 +42,7 @@ def readParameters(input):
             else:
                 #add tuple to the list
                 listFilter.append(filterParam)
-        #if find pattern '^-files$', the following parameters are files
+        #if find pattern '^-files$', the following parameters are files ///////////////////////////////////////////////////////QUI LEGGO I CODICI AL POSTO DEI FILE ZIP/////////////////////////////////////
         elif re.search(r'^-files$', input[i]):
             i += 1
             while i < len(input):
@@ -257,7 +257,7 @@ def readFilesVitis(filename):
                 #add new tuple: (rank, node, Frel, network1, network2)
                 #possible add more parameters
                 try:
-                    tuple = (int(i[0]), i[1].upper(), float(i[3]), i[7], i[8])
+                    tuple = (int(i[0]), i[1].upper(), float(i[3]), i[8], i[9])
                 except:
                     tuple = (int(i[0]), i[1].upper(), float(i[3]))
                 listTuples.append(tuple)
