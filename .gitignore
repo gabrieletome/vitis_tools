@@ -6,3 +6,5 @@ graph_NESRA_LGNexp.py
 __pycache__
 memeSuite/
 example_lists/Esempio_STS
+example_lists/Example_error
+

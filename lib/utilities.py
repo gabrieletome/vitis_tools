@@ -245,24 +245,25 @@ def readFilesVitis(filename):
     #split column based on symbol ','
     listCells = []
     for line in listLine:
+        #print(line)
         listCells.append(line.split(','))
     #Name of the gene is in cell in row 0, column 3
     nameGene = (listCells[0][3].split('-'))[0]
     #add at list of genes
     list_Genes.append(nameGene.upper())
     listTuples = [nameGene.upper()]
-    for i in listCells:
-        if not len(i) < 5:
+    for i in listCells[2:]:
+        try:
+            #add new tuple: (rank, node, Frel, network1, network2)
+            #possible add more parameters
             try:
-                #add new tuple: (rank, node, Frel, network1, network2)
-                #possible add more parameters
-                try:
-                    tuple = (int(i[0]), i[1].upper(), float(i[3]), i[8], i[9])
-                except:
-                    tuple = (int(i[0]), i[1].upper(), float(i[3]))
-                listTuples.append(tuple)
+                #tuple = (int(i[0]), i[1].upper(), float(i[3]), i[7], i[8])
+                tuple = (int(i[0]), i[1].upper(), float(i[3]), i[8], i[9])
             except:
-                pass
+                tuple = (int(i[0]), i[1].upper(), float(i[3]))
+            listTuples.append(tuple)
+        except:
+            pass
     return (listTuples,list_Genes)
 
 
