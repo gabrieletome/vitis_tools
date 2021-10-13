@@ -23,7 +23,7 @@ def nodefounder(a,b,c):
                 indicetrovato=y
                 #global indicenodotrovato
                 if (nododatrovare==a[y][0]):
-                    #indicetrovato=y 
+                    #indicetrovato=y
                     print(indicetrovato)
                     return indicetrovato
 
@@ -179,13 +179,16 @@ def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, typeP
             u = listLineName[index]
             dictStrToWrite[k] = str(u[0])+','+str(u[1])+','+str(u[2])+','+str(u[3])+','+str(u[4])+','+str(u[5])+','+str(u[6])
         else:
-            dictStrToWrite[k] = str(k)+"\n"
+            dictStrToWrite[k] = str(k)
     fileOut = namefile.split("Graph")[0]+'graph_legend_ID_NAME.csv'
     #print('LEGEND IN: \''+fileOut+'\'')
     f = open(fileOut, 'w')
     f.write('ID in graph,'+text[0].split(',')[0]+','+text[0].split(',')[1]+','+text[0].split(',')[2]+','+text[0].split(',')[3]+','+text[0].split(',')[4]+','+text[0].split(',')[5]+','+text[0].split(',')[6])
     for k in nameGenes:
-        f.write(str(idNode[k])+','+dictStrToWrite[k])
+        if dictStrToWrite[k].endswith('\n'):
+            f.write(str(idNode[k])+','+dictStrToWrite[k])
+        else:
+            f.write(str(idNode[k])+','+dictStrToWrite[k]+'\n')
     f.close()
 
     plt.legend(handles=textLegend, fontsize = 'xx-small').set_draggable(True)
@@ -198,8 +201,8 @@ def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, typeP
 
 
 
-    
-     
+
+
     id_nodi_acasissimo=list(G.nodes)
 
     #Create json file of graph
@@ -260,7 +263,7 @@ def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, typeP
 
             dizionario_nested_nodi={"data":(i1,i2,i3,i4)}
 
-            
+
             data_nodes.append(x)
             data_nodes[x]=dizionario_nested_nodi
         #print(data_nodes)
@@ -274,11 +277,11 @@ def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, typeP
             i4={"colourId":'boh'}
             dizionario_nested_archi={"data":[i1,i2,i3,i4]}
 
-            
+
             data_edges.append(x)
             data_edges[x]=dizionario_nested_archi
         #print(data_edges)
-        
+
 
 
         #//////dizionario tra id e data//////////
@@ -295,13 +298,13 @@ def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, typeP
         sumofcosette.append(data_edges)
 
         #Write legend ID-->GENE
-        
+
         #print(listLineName)
 
         #///////aggiungo id-data a nodes e edges//////////////////////////////////////////
         dizionariobello={}
         dizionariobello=dict(zip(lista_nodi_Archi,sumofcosette))
-        
+
         spaghetti=list(G.edges)
         quantograndelistlinename=len(listLineName)
         dizzi={}
@@ -316,17 +319,17 @@ def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, typeP
                 dizzi[k] = str(k)+"\n"
 
         #/////creo il file txt per poterlo modificere come testo e poi passarlo in un json///
-        open(namefile+'yo.json', 'w', encoding='utf-8') 
+        open(namefile+'yo.json', 'w', encoding='utf-8')
         with open(namefile+'yo.json', 'a', encoding='utf-8') as f:
             # f.write("lol"+dizionariobello['nodes'][1]['data'][1]['label'])
             #f.write('{"elements":')
-            #spaghetti=list(G.edges)            
+            #spaghetti=list(G.edges)
             f.write('{"elements":')
             f.write('{')
             f.write('"nodes": [')
             #indicenodotrovato
             for x in range(n_nodi):
-                nodoattuale=lista_deinodi[x]              
+                nodoattuale=lista_deinodi[x]
                 f.write('{')
                 f.write('"data":')
                 f.write('  {')
@@ -351,7 +354,7 @@ def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, typeP
                 f.write('"target":"'+str(lista_degliarchi[x][1])+'",')
                 f.write('"weight":"'+'",')
                 f.write('"codec":')
-                
+
                 if (spaghetti[x][0],spaghetti[x][1]) in estrongPos:
                     f.write('"1"')
                 elif (spaghetti[x][0],spaghetti[x][1]) in estrongNeg:
@@ -364,7 +367,7 @@ def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, typeP
                     f.write('"5"')
                 else:
                     f.write('"6"')
-                
+
                 f.write('}')
                 f.write('},')
             f.write(']')
@@ -421,10 +424,10 @@ def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, typeP
             #print(ePos)
             #print(eNeg)
             '''
-        
+
         #modifico json///////////////////////////////////
         polenta=[]
-        with open(namefile+'yo.json', 'r', encoding='utf-8') as f:    
+        with open(namefile+'yo.json', 'r', encoding='utf-8') as f:
             polenta=f.read()
             #print(polenta)
         polentaold=polenta
@@ -450,9 +453,9 @@ def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, typeP
             polenta=pattern5.sub(r'{\n',polenta)
         if pattern6.search(polenta):
             polenta=pattern6.sub(r'}\n',polenta)
-        
-        
-        stampare=polenta    
+
+
+        stampare=polenta
         f=open(namefile+'final.json', 'w', encoding='utf-8')
         f.write(stampare)
         f.close
@@ -470,7 +473,7 @@ def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, typeP
         '''
 
     #/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-              
+
     #Clean graph and pyplot
     G.clear()
     plt.clf()
@@ -630,7 +633,10 @@ def printCommonGraph(listCommonGenes, pearsonComplete, range_frel, nameDir, auto
         f = open(fileOut, 'w')
         f.write('ID in graph,'+text[0].split(',')[0]+','+text[0].split(',')[1]+','+text[0].split(',')[2]+','+text[0].split(',')[3]+','+text[0].split(',')[4]+','+text[0].split(',')[5]+','+text[0].split(',')[6])
         for k in nameGenes:
-            f.write(str(idNode[k])+','+dictStrToWrite[k])
+            if dictStrToWrite[k].endswith('\n'):
+                f.write(str(idNode[k])+','+dictStrToWrite[k])
+            else:
+                f.write(str(idNode[k])+','+dictStrToWrite[k]+'\n')
         f.close()
 
         #textLegend.append(mlines.Line2D([], [], label='in \''+(fileOut.split('/'))[-1]+'\'', visible=False))
@@ -650,7 +656,7 @@ def printCommonGraph(listCommonGenes, pearsonComplete, range_frel, nameDir, auto
 
 
         #Create json file of graph
-    
+
         H = nx.relabel_nodes(G, dict((v,k) for k,v in idNode.items()))
         #print('Create: \''+namefile+'.json\'', flush=True)
         with open(namefile+'.json', 'w', encoding='utf-8') as f:
@@ -707,7 +713,7 @@ def printCommonGraph(listCommonGenes, pearsonComplete, range_frel, nameDir, auto
 
             dizionario_nested_nodi={"data":(i1,i2,i3,i4)}
 
-            
+
             data_nodes.append(x)
             data_nodes[x]=dizionario_nested_nodi
         #print(data_nodes)
@@ -721,11 +727,11 @@ def printCommonGraph(listCommonGenes, pearsonComplete, range_frel, nameDir, auto
             i4={"colourId":'boh'}
             dizionario_nested_archi={"data":[i1,i2,i3,i4]}
 
-            
+
             data_edges.append(x)
             data_edges[x]=dizionario_nested_archi
         #print(data_edges)
-        
+
 
 
         #//////dizionario tra id e data//////////
@@ -742,13 +748,13 @@ def printCommonGraph(listCommonGenes, pearsonComplete, range_frel, nameDir, auto
         sumofcosette.append(data_edges)
 
         #Write legend ID-->GENE
-        
+
         #print(listLineName)
 
         #///////aggiungo id-data a nodes e edges//////////////////////////////////////////
         dizionariobello={}
         dizionariobello=dict(zip(lista_nodi_Archi,sumofcosette))
-        
+
         spaghetti=list(G.edges)
         quantograndelistlinename=len(listLineName)
         dizzi={}
@@ -763,17 +769,17 @@ def printCommonGraph(listCommonGenes, pearsonComplete, range_frel, nameDir, auto
                 dizzi[k] = str(k)+"\n"
 
         #/////creo il file txt per poterlo modificere come testo e poi passarlo in un json///
-        open(namefile+'yo.json', 'w', encoding='utf-8') 
+        open(namefile+'yo.json', 'w', encoding='utf-8')
         with open(namefile+'yo.json', 'a', encoding='utf-8') as f:
             # f.write("lol"+dizionariobello['nodes'][1]['data'][1]['label'])
             #f.write('{"elements":')
-            #spaghetti=list(G.edges)            
+            #spaghetti=list(G.edges)
             f.write('{"elements":')
             f.write('{')
             f.write('"nodes": [')
             #indicenodotrovato
             for x in range(n_nodi):
-                nodoattuale=lista_deinodi[x]              
+                nodoattuale=lista_deinodi[x]
                 f.write('{')
                 f.write('"data":')
                 f.write('  {')
@@ -798,7 +804,7 @@ def printCommonGraph(listCommonGenes, pearsonComplete, range_frel, nameDir, auto
                 f.write('"target":"'+str(lista_degliarchi[x][1])+'",')
                 f.write('"weight":"'+'",')
                 f.write('"codec":')
-                
+
                 if (spaghetti[x][0],spaghetti[x][1]) in estrongPos:
                     f.write('"1"')
                 elif (spaghetti[x][0],spaghetti[x][1]) in estrongNeg:
@@ -811,7 +817,7 @@ def printCommonGraph(listCommonGenes, pearsonComplete, range_frel, nameDir, auto
                     f.write('"5"')
                 else:
                     f.write('"6"')
-                
+
                 f.write('}')
                 f.write('},')
             f.write(']')
@@ -868,10 +874,10 @@ def printCommonGraph(listCommonGenes, pearsonComplete, range_frel, nameDir, auto
             #print(ePos)
             #print(eNeg)
             '''
-        
+
         #modifico json///////////////////////////////////
         polenta=[]
-        with open(namefile+'yo.json', 'r', encoding='utf-8') as f:    
+        with open(namefile+'yo.json', 'r', encoding='utf-8') as f:
             polenta=f.read()
             #print(polenta)
         polentaold=polenta
@@ -897,9 +903,9 @@ def printCommonGraph(listCommonGenes, pearsonComplete, range_frel, nameDir, auto
             polenta=pattern5.sub(r'{\n',polenta)
         if pattern6.search(polenta):
             polenta=pattern6.sub(r'}\n',polenta)
-        
-        
-        stampare=polenta    
+
+
+        stampare=polenta
         f=open(namefile+'final.json', 'w', encoding='utf-8')
         f.write(stampare)
         f.close
@@ -917,14 +923,14 @@ def printCommonGraph(listCommonGenes, pearsonComplete, range_frel, nameDir, auto
         '''
 
     #/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-              
+
     #Clean graph and pyplot
     G.clear()
     plt.clf()
     plt.close()
 
-    
-    
+
+
 
 #Draw Venn Diagram of common genes
 def printVenn(listForVenn, couples, nameDir):
@@ -1151,6 +1157,6 @@ def nodefounder(a,b,c):
         indicetrovato=y
         #global indicenodotrovato
         if (nododatrovare==a[y][0]):
-            #indicetrovato=y 
+            #indicetrovato=y
             print(indicetrovato)
             return indicetrovato'''
