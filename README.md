@@ -8,6 +8,10 @@
  ```
   ./setup.sh
  ```
+
+ In directory 'import_doc' in present the file 'vv_exprdata_2.csv'.  It is a large file uploaded with Git LFS that generate a pointer to the real file. To have the correct version of the file you need to:
+  - download the repository with Git LFS, or,
+  - get the file at this link (<!--insert link-->) and substitute to the file in 'import_doc' obtained with git clone.
  <!-- Use *requirements.txt* to install the required libraries:
  ```
   pip3 install -r import_doc/requirements.txt
@@ -50,8 +54,6 @@
     pip3 install rectangle-packer
    ``` -->
 
-
- For *biological_validation.py* could be request <!-- is required R with [*topGO*](https://bioconductor.org/packages/release/bioc/html/topGO.html) and --> [DREME](http://meme-suite.org/doc/dreme.html) from MEME suite.
    <!-- Install *topGO* library:
    ```
     if (!requireNamespace("BiocManager", quietly = TRUE))
@@ -59,22 +61,26 @@
 
     BiocManager::install("topGO")
    ``` -->
-   Install DREME: [DREME tool](http://meme-suite.org/doc/download.html)
 
 ## TOOL 1: *managerList.py*
 Tool used to build the complete graph of interaction and find the LGN.
+The output of this tool is the graphical representation (*.png*) of the complete graph discovered observing the file in input with corresponding legend (*.txt*). It is created the *.json* file compatible with Cytoscape. The tool generates a *.csv* file containing the textual representation of the graph, basically are written the edges of the graph. ManagerList returns the degree of the genes and the connected components of the graph.
+The LGN, Local Gene Network of the previous graph, discovered using an adapted version of Charikar algorithm, corresponds to the *Core graph* files. The files for the LGN are the same of the complete graph previously described.
 How to use:
 ```
 Usage: python3 managerList.py -vitis [FILTERS]... -files [FILES]...
-FILES can be a list of .csv or .zip. These are the expansion list from OneGenE
+
 FILTERS:
- '-a'             Autosave image of graphs. If -a is present, it save automatically .png. USE IN MICROSOFT WINDOWS
+ '-a'             Autosave image of graphs. If -a is present, it save automatically .png. USE IN MICROSOFT WINDOWS WSL
  '-f [NUMBER]'    Ignored genes with frel<=NUMBER
  '-t [PATTERN,...]'      Take genes that in 'Network1' or 'Network2' column there is at least one pattern
+
+FILES can be a list of .csv or .zip. These are the expansion list from OneGenE
+
 ```
-Example with Cuticle genes:
+Example with STS:
 ```
-python3 managerList.py -vitis -f 0.1 -a -files example_lists/Vitis_7genes_MYB-ERF/Example.zip
+python3 managerList.py -vitis -f 0.5 -a -files example_lists/default_example_STS/STS_example.zip
 ```
 Help:
 ```
@@ -111,27 +117,24 @@ python3 integrateCoupleGenes.py --help
 ```
 
 ## TOOL 3: *biological_validation.py*
-Tool that execute biological validation.
+Tool that execute biological validation. It perform two analysis:
+  - Computes a Gene Ontology analysis on set of genes.
+  - Prepare the fasta file for the execution of XSTREME tool.
 How to use:
 ```
-Usage: python3 biological_validation.py PARAM [FILTERS]... LIST_GENES COMPLETE_GENOME
+Usage: python3 biological_validation.py PARAM LIST_GENES
 PARAM:
  '-topGO' Execute GO validation
- '-dreme' Execute DREME analysis
-FILTERS (ONLY FOR DREME):
- '-exe'  Execute dreme analysis in local. Without prepare fasta file for DREME website
-LIST_GENES      List of genes in .csv file.
-COMPLETE_GENOME COmplete file information for validation
- * For topGO: file map from vitis ID to GO ID. ('import_doc/V1_GOcomplete.txt')
- * For Dreme: complete list of genes in genome. ('import_doc/grape_1k_upstream.fasta')
+ '-xstreme' Execute XSTREME analysis
+LIST_GENES      List of genes in .csv file. An example is the file: 'example_lists/default_example_STS/STS_biologicalValidation.csv'
 ```
-Example topGO with Cuticle genes:
+Example Gene Ontology analysis:
 ```
-python3 biological_validation.py -topGO example_lists/Vitis_7genes_MYB-ERF/topGO_Vitis/MYB_ERF_topGO0.csv import_doc/V1_GOcomplete.txt
+python3 biological_validation.py -topGO example_lists/default_example_STS/STS_biologicalValidation.csv
 ```
-Example DREME with Cuticle genes:
+Example command need for the preparation of files for XSTREME:
 ```
-python3 biological_validation.py -dreme example_lists/Vitis_7genes_MYB-ERF/topGO_Vitis/MYB_ERF_topGO0.csv import_doc/grape_1k_upstream.fasta
+python3 biological_validation.py -xstreme example_lists/default_example_STS/STS_biologicalValidation.csv
 ```
 Help:
 ```
