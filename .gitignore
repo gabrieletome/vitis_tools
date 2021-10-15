@@ -5,6 +5,10 @@ networkOutput/
 graph_NESRA_LGNexp.py
 __pycache__
 memeSuite/
-example_lists/Esempio_STS
 example_lists/Example_error
+example_lists/Vitis_new
+example_lists/Vitis_33genes
+example_lists/Vitis_7genes_MYB-ERF
+CoupleGeneToIntegrate/coupleGene0.csv
+TODO
 
