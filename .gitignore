@@ -1,6 +1,7 @@
 .gitignore
 .gitattributes
 commonGenesOutput/
+outputBiologicalValidation/
 networkOutput/
 graph_NESRA_LGNexp.py
 __pycache__
