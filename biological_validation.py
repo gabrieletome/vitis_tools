@@ -15,7 +15,7 @@ def printInfo():
     print('LIST_GENES\tList of genes')
     print('COMPLETE_GENOME\tComplete file information for validation.')
     print('\tFor topGO: file map from vitis ID to GO ID')
-    print('\tFor Dreme: complete list of genes in genome')
+    print('\tFor Xstreme: complete list of genes in genome')
     sys.exit(-1)
 
 #Create saving directory
@@ -65,22 +65,22 @@ def createFasta(listGenes, completeFasta, dir):
     return namefileFASTA
 
 def main():
-    if len(sys.argv) >= 2:
+    if len(sys.argv) >= 1:
         if sys.argv[1] == '-topGO':
             #create saving directory
             nameDir = createSavingDir()
             #results_table, results = topGO.topGO_analysis(sys.argv[2], 'import_doc/V1_GOcomplete.txt')
             #Run BP ontology validation
-            results_table, results = topGO.topGO_analysis(sys.argv[2], sys.argv[3], nameDir, 'BP')
+            results_table, results = topGO.topGO_analysis(sys.argv[2], 'import_doc/V1_GOcomplete.txt', nameDir, 'BP')
             print_output_topGO(results_table, results, nameDir, 'BP')
             #Run MF ontology validation
-            results_table, results = topGO.topGO_analysis(sys.argv[2], sys.argv[3], nameDir, 'MF')
+            results_table, results = topGO.topGO_analysis(sys.argv[2], 'import_doc/V1_GOcomplete.txt', nameDir, 'MF')
             print_output_topGO(results_table, results, nameDir, 'MF')
         elif sys.argv[1] == '-xstreme':
             #create saving directory
             nameDir = createSavingDir()
             #create fasta file from list of genes
-            fastaFile = createFasta(sys.argv[2], sys.argv[3], nameDir)
+            fastaFile = createFasta(sys.argv[2], 'import_doc/grape_1k_upstream.fasta', nameDir)
         elif sys.argv[1] == '--help':
             printInfo()
         else:
