@@ -209,9 +209,9 @@ def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, typeP
     if typePrint:
         H = nx.relabel_nodes(G, dict((v,k) for k,v in idNode.items()))
         #print('Create: \''+namefile+'.json\'', flush=True)
-        with open(namefile+'.json', 'w', encoding='utf-8') as f:
-            json.dump(json_graph.node_link_data(G), f, ensure_ascii=False, indent=4)
-            f.close
+        # with open(namefile+'.json', 'w', encoding='utf-8') as f:
+        #     json.dump(json_graph.node_link_data(G), f, ensure_ascii=False, indent=4)
+        #     f.close
 
 
 
@@ -659,10 +659,10 @@ def printCommonGraph(listCommonGenes, pearsonComplete, range_frel, nameDir, auto
         #Create json file of graph
 
         H = nx.relabel_nodes(G, dict((v,k) for k,v in idNode.items()))
-        #print('Create: \''+namefile+'.json\'', flush=True)
-        with open(namefile+'.json', 'w', encoding='utf-8') as f:
-            json.dump(json_graph.node_link_data(G), f, ensure_ascii=False, indent=4)
-            f.close
+        # #print('Create: \''+namefile+'.json\'', flush=True)
+        # with open(namefile+'.json', 'w', encoding='utf-8') as f:
+        #     json.dump(json_graph.node_link_data(G), f, ensure_ascii=False, indent=4)
+        #     f.close
 
 
         id_nodi_acasissimo=list(G.nodes)
