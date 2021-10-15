@@ -10,6 +10,7 @@ import lib.utilities_expansion as utex
 import lib.utilities as ut
 import lib.venn as vennD
 import re
+import os
 import random
 from networkx.readwrite import json_graph
 import json
@@ -472,7 +473,7 @@ def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, typeP
                 if pattern.search(line):
                     polenta=pattern.sub(r']',polenta)
         '''
-
+        os.remove(namefile+'yo.json')
     #/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     #Clean graph and pyplot
@@ -923,7 +924,7 @@ def printCommonGraph(listCommonGenes, pearsonComplete, range_frel, nameDir, auto
                 if pattern.search(line):
                     polenta=pattern.sub(r']',polenta)
         '''
-
+        os.remove(namefile+'yo.json')
     #/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     #Clean graph and pyplot
