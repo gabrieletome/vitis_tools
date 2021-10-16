@@ -75,7 +75,7 @@ FILTERS:
  '-f [NUMBER]'    Ignored genes with frel<=NUMBER
  '-t [PATTERN,...]'      Take genes that in 'Network1' or 'Network2' column there is at least one pattern
 
-FILES can be a list of .csv or .zip. These are the expansion list from OneGenE
+FILES: can be a list of .csv or .zip. These are the expansion list from OneGenE
 
 ```
 Example with STS:
@@ -88,28 +88,35 @@ python3 managerList.py --help
 ```
 
 ## TOOL 2: *integrateCoupleGenes.py*
-Tool used to expand the LGN.
+Tool used to expand the LGN adding to the graph the genes connected to the LGN with specific characteristic. The expansion can be done by:
+  - apply a filter on the relative frequency;
+  - apply a filter on the rank of the genes in the expansion list;
+  - taking only the common genes;
+  - apply a filter on the columns *Network1* and *Network2*
+In output, the tool returns the graphical (*graphGenes.png*) and textual (*edges_graph.csv*) representation of the expanded graph  with the corresponding legend and the file *.json* to import in Cytoscape. Optionally, it can be obtained the histogram and the venn diagram. The histogram represents the genes selected for the expansion (blue columns) respect all the genes present in the expansion list of the starting gene (green columns). The venn diagram (graphical representation up to 5 genes in LGN, textual for any number of genes in LGN) represents how the genes in expansion list are shared between the LGN.
 How to use:
 ```
 Usage: python3 integrateCoupleGenes.py -vitis TYPEA [FILTERS]... -files [GENES] [FILES]...
+
 TYPEA:
- '-frel'                Build expansion network based on FREL. Required filter '-f'
- '-rank [INT]'          Build expansion network based on RANK. Take top genes
- '-shared'              Build expansion network based on SHARED GENES
+ '-frel'                Build expansion network applying a filter to the relative frequency of the edges. Required filter '-f'
+ '-rank [INT]'          Build expansion network based on RANK of the genes in each expansion list given in input.
+ '-shared'              Build expansion network based on SHARED GENES of the genes of the LGN.
  '-pattern [PATTERNS]'  Build expansion network based on genes that have at least one patterns in 'Network1' or 'Network2' columns
+
 FILTERS:
- '-a'           Autosave image of graphs. If -a is present, it save automatically .png. USE IN MICROSOFT WINDOWS
+ '-a'           Autosave image of graphs. If -a is present, it save automatically .png. USE IN MICROSOFT WINDOWS WSL
  '-c'           Add edges between associated genes
  '-e'           Print Venn Diagram and Histogram for complete analysis
  '-f [NUMBER]'  Ignored genes with frel<=NUMBER
-GENES: file .csv with the genes to analyze. Example: ('CoupleGeneToIntegrate/coupleGene.csv')
-FILES can be a list of .csv or .zip
-```
-Example with Cuticle genes:
-```
-python3 integrateCoupleGenes.py -vitis -shared -f 0.1 -e -a -files CoupleGeneToIntegrate/coupleGene0.csv example_lists/Vitis_7genes_MYB-ERF/Example.zip
 
-python3 integrateCoupleGenes.py -vitis -pattern vv60 -f 0.1 -e -a -files CoupleGeneToIntegrate/GroupB_STS.csv example_lists/Esempio_STS/StSyMYB.zip
+GENES: file .csv with the genes to analyze. Example: ('CoupleGeneToIntegrate/default_example_STS.csv')
+
+FILES: can be a list of .csv or .zip. These are the expansion list from OneGenE
+```
+Example with STS:
+```
+python3 integrateCoupleGenes.py -vitis -shared -f 0.1 -a -e -files CoupleGeneToIntegrate/default_example_STS.csv example_lists/default_example_STS/STS_example.zip
 ```
 Help:
 ```
@@ -123,9 +130,11 @@ Tool that execute biological validation. It perform two analysis:
 How to use:
 ```
 Usage: python3 biological_validation.py PARAM LIST_GENES
+
 PARAM:
  '-topGO' Execute GO validation
  '-xstreme' Execute XSTREME analysis
+
 LIST_GENES      List of genes in .csv file. An example is the file: 'example_lists/default_example_STS/STS_biologicalValidation.csv'
 ```
 Example Gene Ontology analysis:
