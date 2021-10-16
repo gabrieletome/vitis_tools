@@ -1,5 +1,5 @@
 # Tools_Expand_Genes_Network
- Tools used to analyze and expand gene networks of Vitis Vinifera. All this tools used Python 3.
+ Tools used to analyze and expand gene networks of Vitis Vinifera. All this tools use Python 3 and R.
 
 ## Prerequisites
  Python 3
