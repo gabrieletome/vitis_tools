@@ -9,7 +9,7 @@
   ./setup.sh
  ```
 
- In directory 'import_doc' in present the file 'vv_exprdata_2.csv'.  It is a large file uploaded with Git LFS that generate a pointer to the real file. To have the correct version of the file you need to:
+ In directory 'import_doc' is present the file 'vv_exprdata_2.csv'.  It is a large file uploaded with Git LFS that generate a pointer to the real file. To have the correct version of the file you need to:
   - download the repository with Git LFS, or,
   - get the file at this link (<!--insert link-->) and substitute to the file in 'import_doc' obtained with git clone.
  <!-- Use *requirements.txt* to install the required libraries:
