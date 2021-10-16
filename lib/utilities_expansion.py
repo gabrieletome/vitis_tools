@@ -9,18 +9,19 @@ import os
 #Print info about cmd command if the call is wrong
 def printInfo():
     print('Usage: python3 integrateCoupleGenes.py -vitis TYPEA [FILTERS]... -files [GENES] [FILES]...')
-    print('TYPEA:')
+    print('\nTYPEA:')
     print('\t-frel\tBuild expansion network based on FREL. Required filter \'-f\'')
     print('\t-rank [INT]\tBuild expansion network based on RANK. Take top genes')
     print('\t-shared\tBuild expansion network based on SHARED GENES.')
     print('\t-pattern [PATTERNS]\tBuild expansion network based on genes that have at least one patterns in \'Network1\' or \'Network2\' columns')
-    print('FILTERS:')
-    print('\t-a\t\t\tAutosave image of graphs. If -a is present, it save automatically .png. USE IN MICROSOFT WINDOWS')
+    print('\nFILTERS:')
+    print('\t-a\t\t\tAutosave image of graphs. If -a is present, it save automatically .png. USE IN MICROSOFT WINDOWS WSL')
     print('\t-c\t\t\tAdd edges between associated genes')
     print('\t-e\t\t\tPrint Venn Diagram and Histogram for complete analysis')
     print('\t-f [NUMBER]\t\tIgnored genes with frel<=NUMBER')
-    print('GENES: file .csv with the genes to analyze. Example: \'CoupleGeneToIntegrate/coupleGene.csv\'')
-    print('FILES can be a list of .csv or .zip')
+    print('\nGENES: file .csv with the genes to analyze. Example: (\'CoupleGeneToIntegrate/default_example_STS.csv\')')
+    print('\nFILES: can be a list of .csv or .zip. These are the expansion list from OneGenE')
+    print('\n-->TEST EXAMPLE: python3 integrateCoupleGenes.py -vitis -shared -f 0.1 -a -e -files CoupleGeneToIntegrate/default_example_STS.csv example_lists/default_example_STS/STS_example.zip')
     sys.exit(-1)
 
 #Manager to read and filter files

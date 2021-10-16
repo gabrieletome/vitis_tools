@@ -8,11 +8,12 @@ list_Genes = []
 #Print info about cmd command if the call is wrong
 def printInfo():
     print('Usage: python3 managerList.py -vitis [FILTERS]... -files [FILES]...')
-    print('FILES can be a list of .csv or .zip')
-    print('FILTERS:')
-    print('\t-a\t\t\tAutosave image of graphs. If -a is present, it save automatically .png. USE IN MICROSOFT WINDOWS')
+    print('\nFILTERS:')
+    print('\t-a\t\t\tAutosave image of graphs. If -a is present, it save automatically .png. USE IN MICROSOFT WINDOWS WSL')
     print('\t-f [NUMBER]\t\tIgnored genes with frel<=NUMBER')
     print('\t-t [PATTERN,...]\tTake genes that in \'Network1\' or \'Network2\' columns there is at least one pattern')
+    print('\nFILES can be a list of .csv or .zip. These are the expansion list from OneGenE')
+    print('\n-->TEST EXAMPLE: python3 managerList.py -vitis -f 0.5 -a -files example_lists/default_example_STS/STS_example.zip')
     sys.exit(-1)
 
 #Read the filter parameters and gene list name files

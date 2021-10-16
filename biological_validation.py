@@ -8,14 +8,13 @@ import lib.diffexp_go_analysis as topGO
 
 #Print info about cmd command if the call is wrong
 def printInfo():
-    print('Usage: python3 biological_validation.py PARAM LIST_GENES COMPLETE_GENOME')
-    print('PARAM:')
+    print('Usage: python3 biological_validation.py PARAM LIST_GENES')
+    print('\nPARAM:')
     print('\t-topGO\t\tExecute GO validation')
     print('\t-xstreme\t\tPrepare file for XSTREME analysis')
-    print('LIST_GENES\tList of genes')
-    print('COMPLETE_GENOME\tComplete file information for validation.')
-    print('\tFor topGO: file map from vitis ID to GO ID')
-    print('\tFor Xstreme: complete list of genes in genome')
+    print('\nLIST_GENES:\tList of genes. Esample: An example is the file: \'example_lists/default_example_STS/STS_biologicalValidation.csv\'')
+    print('\n-->TEST EXAMPLE TOPGO: python3 biological_validation.py -topGO example_lists/default_example_STS/STS_biologicalValidation.csv')
+    print('\n-->TEST EXAMPLE XSTREME: python3 biological_validation.py -xstreme example_lists/default_example_STS/STS_biologicalValidation.csv')
     sys.exit(-1)
 
 #Create saving directory
