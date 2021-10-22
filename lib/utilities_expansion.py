@@ -379,6 +379,8 @@ def printCSV(edgesGraph, listForVenn, nameDir, typeAnalyze):
 
     if typeAnalyze == 2:
         for k in listForVenn:
+            if not os.path.exists(nameDir+str(listForVenn.index(k))+'/intersectionCSV'):
+                os.mkdir(nameDir+str(listForVenn.index(k))+'/intersectionCSV')
             listKey = sorted([u for u in k.keys()], key=len)
             lenMax = len(sorted([u for u in listKey if len(u.split(',')) == 1]))
             #Print .csv for each combination of genes of LGN. They contain the list of genes associated to that combination
@@ -394,9 +396,9 @@ def printCSV(edgesGraph, listForVenn, nameDir, typeAnalyze):
                         nameFile = key.split('\'')[1]
                         nameFile = nameFile.replace("<", "_")
                         nameFile = nameFile.replace(">", "_")
-                        f = open(nameDir+str(listForVenn.index(k))+'/'+nameFile+'.csv', 'w')
+                        f = open(nameDir+str(listForVenn.index(k))+'/intersectionCSV/'+nameFile+'.csv', 'w')
                     else:
-                        f = open(nameDir+str(listForVenn.index(k))+'/intersectionOF'+str(len(key.split(',')))+'genes'+str(dictNumFile[len(key.split(','))])+'.csv', 'w')
+                        f = open(nameDir+str(listForVenn.index(k))+'/intersectionCSV/intersectionOF'+str(len(key.split(',')))+'genes'+str(dictNumFile[len(key.split(','))])+'.csv', 'w')
                         dictNumFile[len(key.split(','))] = dictNumFile[len(key.split(','))]+1
                         for g in sorted(key.split('\'')):
                             if len(g) > 4:
