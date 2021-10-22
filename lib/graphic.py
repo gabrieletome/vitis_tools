@@ -320,8 +320,8 @@ def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, typeP
                 dizzi[k] = str(k)+"\n"
 
         #/////creo il file txt per poterlo modificere come testo e poi passarlo in un json///
-        open(namefile+'yo.json', 'w', encoding='utf-8')
-        with open(namefile+'yo.json', 'a', encoding='utf-8') as f:
+        open(namefile+'temp.json', 'w', encoding='utf-8')
+        with open(namefile+'temp.json', 'a', encoding='utf-8') as f:
             # f.write("lol"+dizionariobello['nodes'][1]['data'][1]['label'])
             #f.write('{"elements":')
             #spaghetti=list(G.edges)
@@ -341,7 +341,7 @@ def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, typeP
                 f.write('"gn":"'+dizzi[nodoattuale][3]+'",')
                 f.write('"vit3":"'+dizzi[nodoattuale][4]+'",')
                 f.write('"nw1":"'+dizzi[nodoattuale][5]+'",')
-                f.write('"nw2":"'+dizzi[nodoattuale][6]+'"')
+                f.write('"nw2":"'+dizzi[nodoattuale][6]+'",')
                 f.write('"nodec":"0"')
                 f.write('}')
                 f.write('},')
@@ -429,7 +429,7 @@ def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, typeP
 
         #modifico json///////////////////////////////////
         polenta=[]
-        with open(namefile+'yo.json', 'r', encoding='utf-8') as f:
+        with open(namefile+'temp.json', 'r', encoding='utf-8') as f:
             polenta=f.read()
             #print(polenta)
         polentaold=polenta
@@ -473,7 +473,7 @@ def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, typeP
                 if pattern.search(line):
                     polenta=pattern.sub(r']',polenta)
         '''
-        os.remove(namefile+'yo.json')
+        os.remove(namefile+'temp.json')
     #/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     #Clean graph and pyplot
@@ -771,8 +771,8 @@ def printCommonGraph(listCommonGenes, pearsonComplete, range_frel, nameDir, auto
                 dizzi[k] = str(k)+"\n"
 
         #/////creo il file txt per poterlo modificere come testo e poi passarlo in un json///
-        open(namefile+'yo.json', 'w', encoding='utf-8')
-        with open(namefile+'yo.json', 'a', encoding='utf-8') as f:
+        open(namefile+'temp.json', 'w', encoding='utf-8')
+        with open(namefile+'temp.json', 'a', encoding='utf-8') as f:
             # f.write("lol"+dizionariobello['nodes'][1]['data'][1]['label'])
             #f.write('{"elements":')
             #spaghetti=list(G.edges)
@@ -792,7 +792,7 @@ def printCommonGraph(listCommonGenes, pearsonComplete, range_frel, nameDir, auto
                 f.write('"gn":"'+dizzi[nodoattuale][3]+'",')
                 f.write('"vit3":"'+dizzi[nodoattuale][4]+'",')
                 f.write('"nw1":"'+dizzi[nodoattuale][5]+'",')
-                f.write('"nw2":"'+dizzi[nodoattuale][6]+'"')
+                f.write('"nw2":"'+dizzi[nodoattuale][6]+'",')
                 f.write('"nodec":"'+dict_isoColor[x+1]+'"')
                 f.write('}')
                 f.write('},')
@@ -880,7 +880,7 @@ def printCommonGraph(listCommonGenes, pearsonComplete, range_frel, nameDir, auto
 
         #modifico json///////////////////////////////////
         polenta=[]
-        with open(namefile+'yo.json', 'r', encoding='utf-8') as f:
+        with open(namefile+'temp.json', 'r', encoding='utf-8') as f:
             polenta=f.read()
             #print(polenta)
         polentaold=polenta
@@ -924,7 +924,7 @@ def printCommonGraph(listCommonGenes, pearsonComplete, range_frel, nameDir, auto
                 if pattern.search(line):
                     polenta=pattern.sub(r']',polenta)
         '''
-        os.remove(namefile+'yo.json')
+        os.remove(namefile+'temp.json')
     #/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     #Clean graph and pyplot
