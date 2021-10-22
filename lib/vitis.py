@@ -2,13 +2,15 @@ import sys
 import re
 import os
 import datetime as dt
-import time
+import time as ti
 import zipfile
 import lib.filters as filters
 import lib.graphic as graphic
 import lib.utilities as ut
 import glob
 from pathlib import Path
+import concurrent.futures
+
 
 autoSaveImg = False
 min_frel = 0
@@ -133,12 +135,17 @@ def printOutput(coreGraph, graphGenes):
     nameFileCore = 'networkOutput/'+printTime+'/Core_Graph'
     coreGraph = sorted(coreGraph, key=ut.ord)
     ut.printCSV(nameFileCore, coreGraph)
-    graphic.drawGraph(coreGraph, nameFileCore+'_Circular', pearsonComplete, autoSaveImg, [], 1-min_frel, False )
-    graphic.drawGraph(coreGraph, nameFileCore, pearsonComplete, autoSaveImg, [], 1-min_frel, True)
 
     #RETURN GRAPH
     nameFileCompleteGraph = 'networkOutput/'+printTime+'/Complete_Graph'
     graphGenes = sorted(graphGenes, key=ut.ord)
     ut.printCSV(nameFileCompleteGraph, graphGenes)
-    graphic.drawGraph(graphGenes, nameFileCompleteGraph+'_Circular', pearsonComplete, autoSaveImg, list_Genes, 1-min_frel, False )
-    graphic.drawGraph(graphGenes, nameFileCompleteGraph, pearsonComplete, autoSaveImg, list_Genes, 1-min_frel, True)
+
+    #DRAW GRAPH
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        #CORE
+        process1 = executor.submit(graphic.drawGraph, coreGraph, nameFileCore+'_Circular', pearsonComplete, autoSaveImg, [], 1-min_frel, False )
+        process2 = executor.submit(graphic.drawGraph, coreGraph, nameFileCore, pearsonComplete, autoSaveImg, [], 1-min_frel, True)
+        #COMPLETE
+        process3 = executor.submit(graphic.drawGraph, graphGenes, nameFileCompleteGraph+'_Circular', pearsonComplete, autoSaveImg, list_Genes, 1-min_frel, False )
+        process4 = executor.submit(graphic.drawGraph, graphGenes, nameFileCompleteGraph, pearsonComplete, autoSaveImg, list_Genes, 1-min_frel, True)
