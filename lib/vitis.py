@@ -7,6 +7,8 @@ import zipfile
 import lib.filters as filters
 import lib.graphic as graphic
 import lib.utilities as ut
+import glob
+from pathlib import Path
 
 autoSaveImg = False
 min_frel = 0
@@ -17,6 +19,7 @@ list_Genes = []
 def buildMatrixGenesVitis(listFilter, listFiles):
     global list_Genes
     matrixGenes = []
+    listacodici=[]
     extensionFiles = listFiles[0][-4:]
     for f in listFiles:
         if f[-4:] == extensionFiles and (f[-4:] != '.csv' or f[-4:] != '.zip'):
@@ -43,7 +46,7 @@ def buildMatrixGenesVitis(listFilter, listFiles):
                     for filter in listFilter:
                         listGenes = applyFilter(listGenes, filter)
                     matrixGenes.append(listGenes)
-            else:
+            elif f[-4:] == '.csv':
                 #Read gene files .csv
                 listGenes = ut.readFilesVitis(namefilezip)
                 list_Genes = listGenes[1]
@@ -52,6 +55,41 @@ def buildMatrixGenesVitis(listFilter, listFiles):
                 for filter in listFilter:
                     listGenes = applyFilter(listGenes, filter)
                 matrixGenes.append(listGenes)
+            else:
+                #print('cacca')
+                #listacodici=[]
+                codici=listFiles[0]
+                listacodici=codici.split(',')
+                file_csv=[]
+                ncodici=len(listacodici)
+                #print(ncodici)
+                #dirname = os.path.dirname(annotated)
+                #filename = os.path.join(dirname, 'relative/path/to/file/you/want')
+                for x in listacodici:
+                    file_csv.append(glob.glob(('../annotated/'+str(x)+'_*')))
+                #print(listacodici)
+                #print(file_csv)
+                #print(listacodici)
+                archiviovec=[]
+                for x in range(ncodici):
+                    if file_csv[x][0] != 0:
+                        archiviovec.append(file_csv[x][0])
+                #print(archiviovec)
+                #////////////////////////////copio il codice da sopra per le zip//////////
+                archive = archiviovec
+                #print(archive)
+                fileArchive = archiviovec
+                #print(fileArchive)
+                for namefilezip in fileArchive:
+                    listGenes = ut.readFilesVitis(namefilezip)
+                    list_Genes = listGenes[1]
+                    listGenes = listGenes[0]
+                    #os.remove(namefilezip)
+                    #Filter lists
+                    for filter in listFilter:
+                        listGenes = applyFilter(listGenes, filter)
+                    matrixGenes.append(listGenes)
+                    #///////////////////////////////////////////////////////////////////////
         else:
             print('ERROR: FILES HAVE DIFFERENT EXTENSION. File need to have the same extension. All .csv or all .zip')
             sys.exit(-1)

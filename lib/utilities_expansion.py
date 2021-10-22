@@ -5,6 +5,7 @@ import sys
 import zipfile
 from io import BytesIO
 import os
+import glob
 
 #Print info about cmd command if the call is wrong
 def printInfo():
@@ -64,7 +65,7 @@ def readFilesGenes(listFiles, coupleGenes, listfilter):
                         for filter in listfilter:
                             listGenes = applyFilter(listGenes, filter)
                         matrixGenes.append(listGenes)
-            else:
+            elif f[-4:]== '.csv':
                 #Read gene files .csv TODO
                 fileRead = open(f, 'r')
                 csvText = fileRead.read()
@@ -78,6 +79,39 @@ def readFilesGenes(listFiles, coupleGenes, listfilter):
                     # for filter in listfilter:
                     #     listGenes = applyFilter(listGenes, filter)
                     # matrixGenes.append(listGenes)
+            else:
+                #print('cacca')
+                #listacodici=[]
+                codici=listFiles[0]
+                listacodici=codici.split(',')
+                file_csv=[]
+                ncodici=len(listacodici)
+                #print(ncodici)
+                for x in listacodici:
+                    file_csv.append(glob.glob('../annotated/'+str(x)+'_*'))
+                #print(listacodici)
+                #print(file_csv)
+                #print(listacodici)
+                archiviovec=[]
+                for x in range(ncodici):
+                    if file_csv[x][0] != 0:
+                        archiviovec.append(file_csv[x][0])
+                #print(archiviovec)
+                #////////////////////////////copio il codice da sopra per le zip//////////
+                archive = archiviovec
+                #print(archive)
+                fileArchive = archiviovec
+                #print(fileArchive)
+                for namefilezip in fileArchive:
+                    listGenes = ut.readFilesVitis(namefilezip)
+                    list_Genes = listGenes[1]
+                    listGenes = listGenes[0]
+                    #os.remove(namefilezip)
+                    #Filter lists
+                    for filter in listfilter:
+                        listGenes = applyFilter(listGenes, filter)
+                    matrixGenes.append(listGenes)
+                    #///////////////////////////////////////////////////////////////////////
         else:
             print('ERROR: FILES HAVE DIFFERENT EXTENSION. File need to have the same extension. All .csv or all .zip')
             sys.exit(-1)
