@@ -109,8 +109,9 @@ FILTERS:
  '-c'           Add edges between associated genes
  '-e'           Print Venn Diagram and Histogram for complete analysis
  '-f [NUMBER]'  Ignored genes with frel<=NUMBER
+ '-u'           Compute the expansion of the graph built on all genes of the files given in input. Do not require the GENES file
 
-GENES: file .csv with the genes to analyze. Example: ('CoupleGeneToIntegrate/default_example_STS.csv')
+GENES: file .csv with the genes to analyze. NOT NEED IN CASE OF TAG '-u'. Example: ('CoupleGeneToIntegrate/default_example_STS.csv')
 
 FILES: can be a list of .csv or .zip. These are the expansion list from OneGenE
 ```

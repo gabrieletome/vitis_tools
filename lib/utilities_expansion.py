@@ -20,7 +20,8 @@ def printInfo():
     print('\t-c\t\t\tAdd edges between associated genes')
     print('\t-e\t\t\tPrint Venn Diagram and Histogram for complete analysis')
     print('\t-f [NUMBER]\t\tIgnored genes with frel<=NUMBER')
-    print('\nGENES: file .csv with the genes to analyze. Example: (\'CoupleGeneToIntegrate/default_example_STS.csv\')')
+    print('\t-u\t\t\tCompute the expansion of the graph built on all genes of the files given in input. Do not require the GENES file')
+    print('\nGENES: file .csv with the genes to analyze. NOT NEED IN CASE OF TAG \'-u\'. Example: (\'CoupleGeneToIntegrate/default_example_STS.csv\')')
     print('\nFILES: can be a list of .csv or .zip. These are the expansion list from OneGenE')
     print('\n-->TEST EXAMPLE: python3 integrateCoupleGenes.py -vitis -shared -f 0.1 -a -e -files CoupleGeneToIntegrate/default_example_STS.csv example_lists/default_example_STS/STS_example.zip')
     sys.exit(-1)
@@ -29,9 +30,10 @@ def printInfo():
 def readFilesGenes(listFiles, coupleGenes, listfilter):
     dictGeneToAnalyze = {}
     #Read only file of a gene to analyze
-    for f in coupleGenes:
-        for elem in f:
-            dictGeneToAnalyze[elem] = 0
+    if '-u' not in [a[0] for a in listfilter]:
+        for f in coupleGenes:
+            for elem in f:
+                dictGeneToAnalyze[elem] = 0
     matrixGenes = []
     extensionFiles = listFiles[0][-4:]
     for f in listFiles:
@@ -53,7 +55,7 @@ def readFilesGenes(listFiles, coupleGenes, listfilter):
                     csvListText = csvText.split(r'\n')
                     nameGene = ((csvListText[0].split(r','))[3]).upper()
                     #if is a gene to analyze read it
-                    if nameGene in dictGeneToAnalyze.keys():
+                    if nameGene in dictGeneToAnalyze.keys() or '-u' in [a[0] for a in listfilter]:
                         csvTemp = open(namefilezip, 'w')
                         for l in csvListText:
                             csvTemp.write(l+'\n')
@@ -69,10 +71,35 @@ def readFilesGenes(listFiles, coupleGenes, listfilter):
                 #Read gene files .csv TODO
                 fileRead = open(f, 'r')
                 csvText = fileRead.read()
-                csvText = csvText.split(r'"')
-                csvText = csvText[0]
+
+                if csvText[1] == '"':
+                    csvText = csvText.split(r'"')
+                else:
+                    csvText = csvText.split('\'')
+                csvListText = []
+                nameGene = ''
+                #different split if is vitis or human
+                csvText = csvText[1]
                 csvListText = csvText.split(r'\n')
-                nameGene = ((re.search(r'-\w*\s', csvListText[0])).group())[1:-1]
+                nameGene = ((csvListText[0].split(r','))[3]).upper()
+                #if is a gene to analyze read it
+                if nameGene in dictGeneToAnalyze.keys() or '-u' in [a[0] for a in listfilter]:
+                    csvTemp = open(f, 'w')
+                    for l in csvListText:
+                        csvTemp.write(l+'\n')
+                    csvTemp.close()
+                    listGenes = []
+                    listGenes = (ut.readFilesVitis(namefilezip))[0]
+                    os.remove(namefilezip)
+                    # #Filter lists
+                    for filter in listfilter:
+                        listGenes = applyFilter(listGenes, filter)
+                    matrixGenes.append(listGenes)
+
+                # csvText = csvText.split(r'"')
+                # csvText = csvText[0]
+                # csvListText = csvText.split(r'\n')
+                # nameGene = ((re.search(r'-\w*\s', csvListText[0])).group())[1:-1]
                 # if nameGene in dictGeneToAnalyze.keys():
                     # listGenes = readFilesHuman(f, TCGAdb)
                     # #Filter lists
@@ -80,7 +107,6 @@ def readFilesGenes(listFiles, coupleGenes, listfilter):
                     #     listGenes = applyFilter(listGenes, filter)
                     # matrixGenes.append(listGenes)
             else:
-                #print('cacca')
                 #listacodici=[]
                 codici=listFiles[0]
                 listacodici=codici.split(',')
@@ -145,7 +171,7 @@ def applyFilter(listGenes, filter):
         listGenes = filters.filterRank(listGenes, int(filter[1]))
     elif filter[0] == '-pattern' and len(filter) >= 2:
         listGenes = filters.filterType(listGenes, filter[1:])
-    elif (filter[0] == '-a' or filter[0] == '-c' or filter[0] == '-e') and len(filter) >= 1:
+    elif (filter[0] == '-a' or filter[0] == '-c' or filter[0] == '-e' or filter[0] == '-u') and len(filter) >= 1:
         #already managed
         pass
     else:

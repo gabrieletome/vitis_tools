@@ -40,7 +40,7 @@ def readParameters(input):
                 else:
                     filterParam = filterParam + (input[i],)
                     i += 1
-            if filterParam[0] == input[i-1] and (filterParam[0] != '-a' and filterParam[0] != '-c' and filterParam[0] != '-e'):
+            if filterParam[0] == input[i-1] and (filterParam[0] != '-a' and filterParam[0] != '-c' and filterParam[0] != '-e' and filterParam[0] != '-u'):
                 #return an error if the filter has zero parameters and is not '-a'
                 print('ERROR: incorrect number of parameters')
                 utex.printInfo()
@@ -73,7 +73,8 @@ def readParameters(input):
             print("ERROR: "+input[i])
             i += 1
     #return an error if the list of file is empty
-    if len(listFiles) < 2:
+    print([a[0] for a in listFilter])
+    if (len(listFiles) < 2 and '-u' not in [a[0] for a in listFilter]) or len(listFiles) < 1:
         print('ERROR: no files')
         utex.printInfo()
 
@@ -102,6 +103,7 @@ def main():
         elif sys.argv[1] == '-vitis' and (sys.argv[2] == '-shared' or sys.argv[2] == '-rank' or sys.argv[2] == '-frel' or sys.argv[2] == '-pattern'):
             #read parameters
             cmd = readParameters(sys.argv)
+            analyzeAllGene = False
             for f in cmd[1]:
                 if f[0] == '-f':
                     global min_frel
@@ -115,15 +117,23 @@ def main():
                 elif f[0] == '-e':
                     global printDiagram
                     printDiagram = True
+                elif f[0] == '-u':
+                    analyzeAllGene = True
             #read each file .csv, read first line, check if is our gene
             #If YES -> go further, If NO -> check next file
             #When we have read all expansion of all gene, manage lists
-            listCouple = utex.readFiles(cmd[0][0])
             #find common genes in the lists readed
             listCommonGenes = []
             edgesGraph = []
-            #read files Vitis
-            listFiles = utex.readFilesGenes(cmd[0][1:], listCouple, cmd[1])
+            listCouple = []
+            if analyzeAllGene:
+                #read files Vitis
+                listFiles = utex.readFilesGenes(cmd[0][:], listCouple, cmd[1])
+                listCouple = [[u[0] for u in listFiles]]
+            else:
+                listCouple = utex.readFiles(cmd[0][0])
+                #read files Vitis
+                listFiles = utex.readFilesGenes(cmd[0][1:], listCouple, cmd[1])
 
             #find common genes
             listCommonGenes = utex.findCommonGenes(listCouple, listFiles)
@@ -139,7 +149,10 @@ def main():
             if printDiagram:
                 utex.printNumberVenn(listCommonGenes, nameDir)
                 graphic.printVenn(listCommonGenes[1], listCouple, nameDir)
-                textFiles = utex.readFilesGenes(cmd[0][1:], listCouple, [('-f',min_frel)])
+                if analyzeAllGene:
+                    textFiles = utex.readFilesGenes(cmd[0][:], listCouple, [('-f',min_frel)])
+                else:
+                    textFiles = utex.readFilesGenes(cmd[0][1:], listCouple, [('-f',min_frel)])
                 graphic.printHistogram(edgesGraph, textFiles, nameDir)
 
             pearsonComplete = []
