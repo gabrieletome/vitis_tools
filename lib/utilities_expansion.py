@@ -392,12 +392,16 @@ def printCSV(edgesGraph, listForVenn, nameDir, typeAnalyze):
         os.mkdir(nameDirGenes)
         #Write file .csv
         f = open(nameDirGenes+'edges_graph'+'.csv', 'w')
-        f.write(str(nameF)+',rank,frel,'+lineIntro+'\n')
+        f.write('NodeA,NodeB,frel\n')
         for elem in k[1:]:
-            try:
-                f.write(str(elem[0])+','+str(elem[1])+','+str(elem[3])+','+dictStrToWrite[elem[2]]+'\n')
-            except:
-                f.write(str(elem[0])+','+str(elem[1])+','+str(elem[3])+','+elem[2]+'\n')
+            f.write(elem[0]+','+elem[2]+','+str(elem[3])+'\n')
+
+        # f.write(str(nameF)+',rank,frel,'+lineIntro+'\n')
+        # for elem in k[1:]:
+        #     try:
+        #         f.write(str(elem[0])+','+str(elem[1])+','+str(elem[3])+','+dictStrToWrite[elem[2]]+'\n')
+        #     except:
+        #         f.write(str(elem[0])+','+str(elem[1])+','+str(elem[3])+','+elem[2]+'\n')
             #
             # string = str(elem[0])+','+str(elem[1])+','+str(elem[2])+','+str(elem[3])+'\n'
             # f.write(string)

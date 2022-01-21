@@ -633,7 +633,7 @@ def printCommonGraph(listCommonGenes, pearsonComplete, range_frel, nameDir, auto
         fileOut = namefile.split("graph")[0]+'graph_legend_ID_NAME.csv'
         print('LEGEND IN: \''+fileOut+'\'')
         f = open(fileOut, 'w')
-        f.write('ID in graph,'+text[0].split(',')[0]+','+text[0].split(',')[1]+','+text[0].split(',')[2]+','+text[0].split(',')[3]+','+text[0].split(',')[4]+','+text[0].split(',')[5]+','+text[0].split(',')[6])
+        f.write('ID in graph,'+text[0].split(',')[0]+','+text[0].split(',')[1]+','+text[0].split(',')[2]+','+text[0].split(',')[3]+','+text[0].split(',')[4]+','+text[0].split(',')[5]+','+text[0].split(',')[6]+',\n')
         for k in nameGenes:
             if dictStrToWrite[k].endswith('\n'):
                 f.write(str(idNode[k])+','+dictStrToWrite[k])
