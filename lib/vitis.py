@@ -9,8 +9,6 @@ import lib.graphic as graphic
 import lib.utilities as ut
 import glob
 from pathlib import Path
-import concurrent.futures
-
 
 autoSaveImg = False
 min_frel = 0
@@ -142,10 +140,7 @@ def printOutput(coreGraph, graphGenes):
     ut.printCSV(nameFileCompleteGraph, graphGenes)
 
     #DRAW GRAPH
-    with concurrent.futures.ProcessPoolExecutor() as executor:
-        #CORE
-        process1 = executor.submit(graphic.drawGraph, coreGraph, nameFileCore+'_Circular', pearsonComplete, autoSaveImg, [], 1-min_frel, False )
-        process2 = executor.submit(graphic.drawGraph, coreGraph, nameFileCore, pearsonComplete, autoSaveImg, [], 1-min_frel, True)
-        #COMPLETE
-        process3 = executor.submit(graphic.drawGraph, graphGenes, nameFileCompleteGraph+'_Circular', pearsonComplete, autoSaveImg, list_Genes, 1-min_frel, False )
-        process4 = executor.submit(graphic.drawGraph, graphGenes, nameFileCompleteGraph, pearsonComplete, autoSaveImg, list_Genes, 1-min_frel, True)
+    graphic.drawGraph(coreGraph, nameFileCore+'_Circular', pearsonComplete, autoSaveImg, [], 1-min_frel, False)
+    graphic.drawGraph(coreGraph, nameFileCore, pearsonComplete, autoSaveImg, [], 1-min_frel, True)
+    graphic.drawGraph(graphGenes, nameFileCompleteGraph+'_Circular', pearsonComplete, autoSaveImg, list_Genes, 1-min_frel, False)
+    graphic.drawGraph(graphGenes, nameFileCompleteGraph, pearsonComplete, autoSaveImg, list_Genes, 1-min_frel, True)
