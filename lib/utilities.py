@@ -224,9 +224,7 @@ def pearsonCorrelation(edges, file):
         try:
             edgeCorrValue.append((line1[0], line2[0], (stat.pearsonr(line1[1:], line2[1:]))[0]))
         except:
-            print(k)
-            print(line1)
-            print(line2)
+            pass
     return edgeCorrValue
 
 #Read file .csv
