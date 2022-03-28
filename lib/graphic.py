@@ -230,7 +230,9 @@ def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, typeP
         lista_nodi_Archi=['nodes','edges']
         id_nodes=[]
         id_edges=[]
-
+        lista_pesi=[]
+        for e in edges:
+            lista_pesi.append(e[2])
 
         #///liste degli id/////////////////////////////
         for x in range(n_nodi):
@@ -354,7 +356,7 @@ def drawGraph(net, namefile, pearson, autoSaveImg, list_Genes, range_frel, typeP
                 f.write('"id":"e'+ str(x)+'",')
                 f.write('"source":"'+str(lista_degliarchi[x][0])+'",')
                 f.write('"target":"'+str(lista_degliarchi[x][1])+'",')
-                f.write('"weight":"'+'",')
+                f.write('"weight":"'+str(lista_pesi[x])+'",')
                 f.write('"codec":')
 
                 if (spaghetti[x][0],spaghetti[x][1]) in estrongPos:
@@ -681,7 +683,9 @@ def printCommonGraph(listCommonGenes, pearsonComplete, range_frel, nameDir, auto
         lista_nodi_Archi=['nodes','edges']
         id_nodes=[]
         id_edges=[]
-
+        lista_pesi=[]
+        for e in edges:
+            lista_pesi.append(e[2])
 
         #///liste degli id/////////////////////////////
         for x in range(n_nodi):
@@ -805,7 +809,7 @@ def printCommonGraph(listCommonGenes, pearsonComplete, range_frel, nameDir, auto
                 f.write('"id":"e'+ str(x)+'",')
                 f.write('"source":"'+str(lista_degliarchi[x][0])+'",')
                 f.write('"target":"'+str(lista_degliarchi[x][1])+'",')
-                f.write('"weight":"'+'",')
+                f.write('"weight":"'+str(lista_pesi[x])+'",')
                 f.write('"codec":')
 
                 if (spaghetti[x][0],spaghetti[x][1]) in estrongPos:
